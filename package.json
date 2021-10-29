@@ -1,0 +1,25 @@
+{
+  "name": "express_world",
+  "version": "1.0.0",
+  "description": "Express Hello World App",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest",
+    "test:unit": "jest --coverage",
+    "format": "prettier --write \"src/**/*.js\"",
+    "lint": "eslint",
+    "test:e2e-ci": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "jest": "^26.6.3",
+    "supertest": "^6.0.1",
+    "typescript": "^4.0.5"
+  }
+}
