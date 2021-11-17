@@ -4,7 +4,7 @@ exports.up = function (knex) {
       .references('user_id').inTable('user')
       .onUpdate('CASCADE').onDelete('CASCADE')
 
-    table.integer('retro_id')
+    table.uuid('retro_id')
       .references('retro_id').inTable('retro')
       .onUpdate('CASCADE').onDelete('CASCADE')
 
