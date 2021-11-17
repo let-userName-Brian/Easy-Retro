@@ -4,8 +4,8 @@
   "description": "Express Hello World App",
   "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon src/app.js",
-    "start": "node src/app.js",
+    "start:dev": "npx knex migrate:latest && npx knex seed:run && nodemon src/app.js",
+    "start": "npx knex migrate:latest && npx knex seed:run && node src/app.js",
     "test": "jest",
     "test:unit": "jest --coverage",
     "format": "prettier --write \"src/**/*.js\"",
@@ -20,7 +20,8 @@
     "knex": "^0.95.14",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.15",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "^8.1.0",

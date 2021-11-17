@@ -8,9 +8,10 @@ exports.up = function (knex) {
       .references('group_id').inTable('group')
       .onUpdate('CASCADE').onDelete('CASCADE')
 
-    table.string('role').notNullable().defaultTo('contributor')
+    table.boolean('is_admin').notNullable().defaultTo('false')
 
     table.timestamps(true, true); // adds created_at and updated_at
+    table.primary(['user_id', 'group_id'])
   });
 };
 
