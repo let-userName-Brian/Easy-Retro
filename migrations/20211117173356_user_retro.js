@@ -11,6 +11,7 @@ exports.up = function (knex) {
     table.boolean('is_facilitator').notNullable().defaultTo(false)
 
     table.timestamps(true, true); // adds created_at and updated_at
+    table.primary(['user_id', 'retro_id'])
   });
 };
 
