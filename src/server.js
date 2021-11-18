@@ -1,9 +1,9 @@
 const express = require('express');
 const knex = require('knex')(require('../knexfile.js')[process.env.NODE_ENV || 'development']);
 const app = express();
-const port = 8080;
 const server = require('http').createServer(app);
 const cors = require('cors')
+
 const io = require('socket.io')(server, {
   cors: {
     origin: "*",
@@ -35,10 +35,6 @@ app.get('/users', async (req, res) => {
   let data = await knex.select('*').from('user')
   
   res.status(200).json(data)
-})
-
-server.listen(port, () => {
-  console.log(`Dropping the hammer on port:${port}`);
 })
 
 module.exports = server;

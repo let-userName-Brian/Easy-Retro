@@ -7,7 +7,7 @@ describe('loading express', function () {
   var server;
   beforeEach(function () {
     server = require('./server');
-  });
+
 
   afterEach(function (done) {
     server.close();
