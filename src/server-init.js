@@ -1,4 +1,4 @@
-const server = require('./server')
+const {server} = require('./server')
 
 const port = 8080;
 server.listen(port, () => {
