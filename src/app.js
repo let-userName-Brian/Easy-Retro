@@ -30,12 +30,14 @@ app.get('/', (req, res) => {
   res.status(200).send('Welcome to Super Mario World!');
 });
 
-app.get('/users', (req, res) => {
-  getAllUsers().then(data => res.json(data))
+app.get('/users', async (req, res) => {
+  //res.status(200).send("Good :)")
+  let data = await knex.select('*').from('user')
+  
+  res.json(data)
 })
 
 function getAllUsers() {
-  return knex.select('*').from('user')
 }
 
 server.listen(port, () => {
