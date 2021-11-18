@@ -2,10 +2,10 @@
   "name": "express_world",
   "version": "1.0.0",
   "description": "Express Hello World App",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start:dev": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && nodemon src/app.js",
-    "start": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && node src/app.js",
+    "start:dev": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && nodemon src/server.js",
+    "start": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && node src/server.js",
     "test": "jest",
     "test:unit": "jest --coverage",
     "format": "prettier --write \"src/**/*.js\"",

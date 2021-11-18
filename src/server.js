@@ -34,11 +34,8 @@ app.get('/users', async (req, res) => {
   //res.status(200).send("Good :)")
   let data = await knex.select('*').from('user')
   
-  res.json(data)
+  res.status(200).json(data)
 })
-
-function getAllUsers() {
-}
 
 server.listen(port, () => {
   console.log(`Dropping the hammer on port:${port}`);

@@ -6,10 +6,12 @@ const { default: knex } = require('knex');
 describe('loading express', function () {
   var server;
   beforeEach(function () {
-    server = require('./app');
+    server = require('./server');
   });
-  afterEach(function () {
+
+  afterEach(function (done) {
     server.close();
+    done()
   });
 
   it('responds to /', function testSlash(done) {
@@ -24,8 +26,7 @@ describe('loading express', function () {
       .expect(404, done);
   });
 
-  // test /users
-  it('responds to /users', function testUsers(done) {
+  it('responds to /users with json', function testUsers(done) {
     request(server)
       .get('/users')
       .expect(200, done)
