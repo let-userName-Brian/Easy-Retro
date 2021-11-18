@@ -37,4 +37,4 @@ app.get('/users', async (req, res) => {
   res.status(200).json(data)
 })
 
-module.exports = server;
+module.exports = {server, knex};

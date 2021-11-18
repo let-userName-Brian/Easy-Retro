@@ -1,18 +1,20 @@
 const request = require('supertest');
 const { expect } = require('@jest/globals');
-const { default: knex } = require('knex');
-
 
 describe('loading express', function () {
-  var server;
+  var { server, knex } = require('./server');
   beforeEach(function () {
-    server = require('./server');
-
+  })
 
   afterEach(function (done) {
     server.close();
     done()
   });
+
+  afterAll(() => {
+    console.log('destroying the db connection, dawg.')
+    knex.destroy();
+  })
 
   it('responds to /', function testSlash(done) {
     request(server)
@@ -31,5 +33,5 @@ describe('loading express', function () {
       .get('/users')
       .expect(200, done)
   });
-  
+
 });
