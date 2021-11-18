@@ -2,10 +2,10 @@
   "name": "express_world",
   "version": "1.0.0",
   "description": "Express Hello World App",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start:dev": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && nodemon src/app.js",
-    "start": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && node src/app.js",
+    "start:dev": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && nodemon src/server.js",
+    "start": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && node src/server.js",
     "test": "jest",
     "test:unit": "jest --coverage",
     "format": "prettier --write \"src/**/*.js\"",
@@ -15,12 +15,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "knex": "^0.95.14",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.15",
     "pg": "^8.7.1",
+    "socket.io": "^4.4.0",
+    "socket.io-client": "^4.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
