@@ -13,15 +13,16 @@ describe('loading express', function () {
     knex.destroy();
   })
 
-  it('responds to /', function testSlash(done) {
+  it('responds to /retros', done => {
     request(server)
-      .get('/')
+      .get('/retros')
       .expect(200, done);
   });
 
-  it('404 everything else', function testPath(done) {
+  it('responds to /retros/:retro_id', done => {
+    let retro_id = "e0fef645-088d-4f13-b53a-ccb95f4f2131"
     request(server)
-      .get('/foo/bar')
-      .expect(404, done);
+      .get(`/retros/${retro_id}`)
+      .expect(200, done);
   });
 });
