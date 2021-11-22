@@ -2,10 +2,10 @@ const request = require('supertest');
 const { knex } = require('./knexConnector')
 
 describe('loading express', function () {
-  var { server } = require('./server');
+  var { app } = require('./app');
 
   afterEach(function (done) {
-    server.close();
+    app.close();
     done()
   });
 
@@ -14,13 +14,13 @@ describe('loading express', function () {
   })
 
   it('responds to /', function testSlash(done) {
-    request(server)
+    request(app)
       .get('/')
       .expect(200, done);
   });
 
   it('404 everything else', function testPath(done) {
-    request(server)
+    request(app)
       .get('/foo/bar')
       .expect(404, done);
   });
