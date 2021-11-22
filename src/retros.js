@@ -23,7 +23,6 @@ async function getRetroByUserId(req, res){
   return await knex('user_retro')
     .select('retro_id')
     .where({user_id})
-    .then(data =>res.json(data))
     .then(retros => retros.map(id => 
       knex('retro')
         .select('*')
