@@ -1,7 +1,7 @@
 const express = require('express')();
 const app = require('http').createServer(express);
 const cors = require('cors')
-const { getRetros, getRetroById, getRetroByUserId } = require('./retros')
+const { getRetros, getRetroById, getRetrosByUserId } = require('./retros')
 const { getUsers } = require('./users')
 const SocketServer = require('./socketServer');
 
@@ -13,7 +13,7 @@ express.get('/', (req, res) => {
 
 express.get('/users', getUsers)
 express.get('/retros', getRetros)
-express.get('/retros/:user_id', getRetroByUserId)
+express.get('/retros/:user_id', getRetrosByUserId)
 express.get('/retros/:retro_id', getRetroById)
 
 new SocketServer(app)
