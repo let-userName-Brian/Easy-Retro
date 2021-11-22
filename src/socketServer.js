@@ -35,7 +35,7 @@ module.exports = class SocketServer {
     this.io.to(retroId).emit('userJoinedRetro', userId)
 
     // Send that user the retro objects
-    this.sendRetroToUser(socket, userId, retroId)
+    this.sendRetroToUser(socket, retroId)
   }
 
   /**
@@ -46,13 +46,13 @@ module.exports = class SocketServer {
     // Get entire retro obj from db
     let retro = await fetchRetro(retro_id)
     let columns = await fetchColumnsByRetroId(retro_id)
-    let cards = await fetchCardsByRetroId(column.column_id)
-    let comments = await fetchCommentsByRetroId(card.card_id)
+    //let cards = await fetchCardsByRetroId(column.column_id)
+    //let comments = await fetchCommentsByRetroId(card.card_id)
 
-    socket.emit('fetchedRetro', retro)
-    socket.emit('fetchedCards', cards)
-    socket.emit('fetchedColumns', columns)
-    socket.emit('fetchedComments', comments)
+    socket.emit('receivedRetro', retro)
+    socket.emit('receivedColumns', columns)
+    //socket.emit('receivedCards', cards)
+    //socket.emit('receivedComments', comments)
   }
 
   columnAdded(retro_id, column) {
