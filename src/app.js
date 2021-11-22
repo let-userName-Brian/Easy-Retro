@@ -13,6 +13,10 @@ express.get('/', (req, res) => {
   res.status(200).send('Welcome to Super Mario World!');
 });
 
+express.get('/header', (req, res) => {
+  res.json(req.headers)
+})
+
 express.get('/users', getUsers)
 express.get('/users/:user_id', getUserById)
 express.get('/users/:user_id/retros', getRetrosByUserId)

@@ -7,10 +7,11 @@ async function getColumnsByRetroId(req, res) {
 }
 
 async function fetchColumnsByRetroId(retro_id) {
-  let { column_ids } = await fetchRetro(retro_id)
-  return knex('columns')
+  let retro = await fetchRetro(retro_id)
+  let column_ids = retro.column_ids
+  return knex('column')
     .select('*')
-    .where({ column_ids })
+    .whereIn('column_id', column_ids)
 }
 
 module.exports = { getColumnsByRetroId, fetchColumnsByRetroId }
