@@ -1,6 +1,6 @@
-const {server} = require('./server')
+const { app } = require('./app')
 
 const port = 8080;
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Dropping the hammer on port:${port}`);
 })
