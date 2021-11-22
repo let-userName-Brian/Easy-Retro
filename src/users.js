@@ -5,4 +5,10 @@ async function getUsers(req, res) {
   res.status(200).json(data)
 }
 
-module.exports = { getUsers }
+async function getUserById(req, res) {
+  let user_id = req.params.user_id
+  let data = await knex.select('*').from('user').where({ user_id })
+  res.status(200).json(data[0])
+}
+
+module.exports = { getUsers, getUserById }

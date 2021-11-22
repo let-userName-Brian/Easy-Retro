@@ -1,4 +1,5 @@
 const { knex } = require("./knexConnector")
+const uuid = require('uuid')
 
 async function getRetros(req, res) {
   await knex('retro')
@@ -8,7 +9,7 @@ async function getRetros(req, res) {
 
 async function getRetroById(req, res) {
   let retro_id = req.params.retro_id
-  fetchRetro(retro_id)
+  await fetchRetro(retro_id)
     .then(retro => res.json(retro))
 }
 
