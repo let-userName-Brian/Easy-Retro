@@ -9,13 +9,14 @@ async function getRetros(req, res) {
 async function getRetroById(req, res) {
   let retro_id = req.params.retro_id
   fetchRetro(retro_id)
-    .then(retros => res.json(retros[0]))
+    .then(retro => res.json(retro))
 }
 
 async function fetchRetro(retro_id) {
   return await knex('retro')
     .select('*')
     .where({ retro_id })
+    .then(retros => retros[0])
 }
 
-module.exports = { getRetros, getRetroById }
+module.exports = { getRetros, getRetroById, fetchRetro }
