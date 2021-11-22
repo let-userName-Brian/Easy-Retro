@@ -22,15 +22,11 @@ async function fetchRetro(retro_id) {
 
 async function getRetrosByUserId(req, res) {
   let user_id = req.params.user_id
-  return await knex('user_retro')
-    .select('retro_id')
-    .where({ user_id })
-    .then(retros => retros.map(id =>
-      knex('retro')
-        .select('*')
-        .where('retro_id', id.retro_id)
-        .then(result => res.json(result))
-    ))
+  knex('retro')
+    .innerJoin('user_retro','retro.retro_id', 'user_retro.retro_id' )
+    .where({ user_id})
+    .then(data => res.json(data))
+    .catch(err => console.log(err))
 }
 
 module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId }

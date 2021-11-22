@@ -10,5 +10,5 @@ exports.seed = function (knex) {
     { user_id: "e8c00cd6-4077-470f-8b61-17a4a1386959", retro_id: "9202ffb1-7086-4ac0-9f5a-597fcf620429" },
     { user_id: "c1ad74ae-b651-4fa0-9820-833193797964", retro_id: "78557390-b5bb-4a3f-80d2-795814f99f66" },
 
-  ]).onConflict(['user_id', 'retro_id']).ignore();
+  ])//.onConflict(['user_id', 'retro_id']).ignore();
 };
