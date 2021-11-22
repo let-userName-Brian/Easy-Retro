@@ -18,4 +18,17 @@ async function fetchRetro(retro_id) {
     .where({ retro_id })
 }
 
-module.exports = { getRetros, getRetroById }
+async function getRetroByUserId(req, res){
+  let user_id= req.params.user_id
+  return await knex('user_retro')
+    .select('retro_id')
+    .where({user_id})
+    .then(retros => retros.map(id => 
+      knex('retro')
+        .select('*')
+        .where('retro_id', id.retro_id)
+        .then(result=> res.json(result))
+        ))
+}
+
+module.exports = { getRetros, getRetroById, getRetroByUserId}
