@@ -31,46 +31,34 @@ async function getRetrosByUserId(req, res) {
 
 //postRetro
 async function postRetro(req, res) {
+  //may need to revise if it gets wacky (Chasten)
   //insert the column id and name into the column table
-let tags =req.body.tags
+let tags = req.body.tags
 let retro_name = req.body.retro_name
-let column_id = req.body.column_id
-let column_name = req.body.column_name
+let columns = req.body.column_names.map((name)=>{
+  return {column_name: name}
+})
 let retro_id = uuidv4()
-return await knex('column')
-  .insert({column_id, column_name})
-  .innerJoin('retro', 'column.column_id', 'retro.column_id')
-  .then(() => knex('retro')
-    .insert({
-      retro_id: retro_id, 
-      retro_name: retro_name, 
-      column_id: column_id,
-      tags: tags
-    }))
-      .then(res => res.send(retro_id))
+
+return knex.transaction(function (t) {
+  return knex('column_table')
+  .transacting(t)  
+  .insert(columns, 'column_id')
+    .then((column_ids) => knex('retro')
+      .transacting(t)
+      .insert({
+        retro_id: retro_id, 
+        retro_name: retro_name, 
+        column_ids: JSON.stringify(column_ids),
+        tags: tags
+      }, "retro_id"))
+      .then(retro_id => { 
+        t.commit 
+        return retro_id
+      })
+      .then((retro_id) => res.json(retro_id[0]))
+      .catch(t.rollback)
+})
 }
-
-// insert into retro(retro_id, retro_name, tags) 
-// values ('9202ffb1-7086-4ac0-9f5a-597fcf620425', 'testing', '{worked, maybe}');
-
-// console.log('body:',req.body)
-// let tags =req.body.tags
-// let retro_name = req.body.retro_name
-// let column_id = req.body.column_id
-// //let column_name = req.body.column_name
-// let retro_id = uuidv4()
-// return await knex('retro')
-//   .insert({
-//     retro_id: retro_id, 
-//     retro_name: retro_name, 
-//     column_id: column_id,
-//     tags: tags})
-//   //.then(res.send(retro_id))
-//   //insert column names where the column ID matches with the column name
-//   .catch(err => console.log(err))
-//   .then(() => knex('column')
-//     .innerJoin('retro', 'retro.column_id', 'column.column_id')
-//     .insert({column_name: '[column_name]'})
-//     )
 
 module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro }
