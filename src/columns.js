@@ -9,7 +9,7 @@ async function getColumnsByRetroId(req, res) {
 async function fetchColumnsByRetroId(retro_id) {
   let retro = await fetchRetro(retro_id)
   let column_ids = retro.column_ids
-  return knex('column')
+  return knex('column_table')
     .select('*')
     .whereIn('column_id', column_ids)
 }
