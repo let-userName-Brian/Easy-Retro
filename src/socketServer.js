@@ -46,10 +46,10 @@ module.exports = class SocketServer {
     // Get entire retro obj from db
     let retro = await fetchRetro(retro_id)
     let columns = await fetchColumnsByRetroId(retro_id)
-    let cardz /*= await fetchCardsByRetroId(retro_id)*/
+    let cards /*= await fetchCardsByRetroId(retro_id)*/
     let comments /*= await fetchCommentsByRetroId(card.card_id)*/
 
-    socket.emit('initRetro', {retro, columns, cardz, comments})
+    socket.emit('initRetro', {retro, columns, cards, comments})
     //socket.emit('receivedColumns', columns)
     //socket.emit('receivedCards', cards)
     //socket.emit('receivedComments', comments)
