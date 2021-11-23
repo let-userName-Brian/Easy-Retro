@@ -17,16 +17,16 @@ module.exports = class SocketServer {
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
       // Establish all connection points that the client may send to the server
-      socket.on('joinRetro', (payload) => this.joinRetro(socket, payload))
+      socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
     });
   }
 
   /**
    * Request from the client to join a room by retro ID
-   * @param {string} userId 
-   * @param {string} retroId 
+   * @param {string} userId
+   * @param {string} retroId
    */
-  joinRetro(socket, { userId, retroId }) {
+  async joinRetro(socket, { userId, retroId }) {
     // Put the client into a room with the same name as the retro id
     socket.join(retroId);
     console.log('User has joined retro. ', { userId, retroId })
@@ -35,22 +35,22 @@ module.exports = class SocketServer {
     this.io.to(retroId).emit('userJoinedRetro', userId)
 
     // Send that user the retro objects
-    this.sendRetroToUser(socket, retroId)
+    await this.sendRetroToUser(socket, retroId)
   }
 
   /**
    * Sends entire retro payload to the room
-   * @param {string} retro_id 
+   * @param {string} retro_id
    */
   async sendRetroToUser(socket, retro_id) {
     // Get entire retro obj from db
     let retro = await fetchRetro(retro_id)
     let columns = await fetchColumnsByRetroId(retro_id)
-    //let cards = await fetchCardsByRetroId(column.column_id)
-    //let comments = await fetchCommentsByRetroId(card.card_id)
+    let cardz /*= await fetchCardsByRetroId(retro_id)*/
+    let comments /*= await fetchCommentsByRetroId(card.card_id)*/
 
-    socket.emit('receivedRetro', retro)
-    socket.emit('receivedColumns', columns)
+    socket.emit('initRetro', {retro, columns, cardz, comments})
+    //socket.emit('receivedColumns', columns)
     //socket.emit('receivedCards', cards)
     //socket.emit('receivedComments', comments)
   }
