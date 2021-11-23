@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable('user_retro', table => {
     table.uuid('user_id')
-      .references('user_id').inTable('user')
+      .references('user_id').inTable('user_profile')
       .onUpdate('CASCADE').onDelete('CASCADE')
 
     table.uuid('retro_id')

@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  return knex.schema.createTable('user', table => {
+  return knex.schema.createTable('user_profile', table => {
     table.uuid('user_id').primary().notNullable(); // UUID provided by platform one
     table.string('user_name')
     table.boolean('is_dark_mode').notNullable().defaultTo(false) // flag if user is using dark mode
@@ -8,5 +8,5 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists('user');
+  return knex.schema.dropTableIfExists('user_profile');
 };

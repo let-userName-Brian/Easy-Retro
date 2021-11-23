@@ -1,5 +1,5 @@
 const { knex } = require("./knexConnector")
-const uuid = require('uuid')
+const { v4: uuidv4 } = require('uuid');
 
 async function getRetros(req, res) {
   await knex('retro')
@@ -29,4 +29,48 @@ async function getRetrosByUserId(req, res) {
     .catch(err => console.log(err))
 }
 
-module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId }
+//postRetro
+async function postRetro(req, res) {
+  //insert the column id and name into the column table
+let tags =req.body.tags
+let retro_name = req.body.retro_name
+let column_id = req.body.column_id
+let column_name = req.body.column_name
+let retro_id = uuidv4()
+return await knex('column')
+  .insert({column_id, column_name})
+  .innerJoin('retro', 'column.column_id', 'retro.column_id')
+  .then(() => knex('retro')
+    .insert({
+      retro_id: retro_id, 
+      retro_name: retro_name, 
+      column_id: column_id,
+      tags: tags
+    }))
+      .then(res => res.send(retro_id))
+}
+
+// insert into retro(retro_id, retro_name, tags) 
+// values ('9202ffb1-7086-4ac0-9f5a-597fcf620425', 'testing', '{worked, maybe}');
+
+// console.log('body:',req.body)
+// let tags =req.body.tags
+// let retro_name = req.body.retro_name
+// let column_id = req.body.column_id
+// //let column_name = req.body.column_name
+// let retro_id = uuidv4()
+// return await knex('retro')
+//   .insert({
+//     retro_id: retro_id, 
+//     retro_name: retro_name, 
+//     column_id: column_id,
+//     tags: tags})
+//   //.then(res.send(retro_id))
+//   //insert column names where the column ID matches with the column name
+//   .catch(err => console.log(err))
+//   .then(() => knex('column')
+//     .innerJoin('retro', 'retro.column_id', 'column.column_id')
+//     .insert({column_name: '[column_name]'})
+//     )
+
+module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro }
