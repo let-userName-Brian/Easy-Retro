@@ -1,6 +1,6 @@
 exports.seed = function (knex) {
   // Inserts seed entries
-  return knex('user').insert([
+  return knex('user_profile').insert([
     { user_id: "c1ad74ae-b651-4fa0-9820-833193797964", user_name: 'Floyd Thormodson', is_dark_mode: false },
     { user_id: "0e5639ea-8868-4bf6-ab5f-cb8a8d470785", user_name: 'Mario Davies', is_dark_mode: false },
     { user_id: "a4e73f0d-60c2-4c30-8e7a-d54f637a8760", user_name: 'Brian Hardy', is_dark_mode: true },
