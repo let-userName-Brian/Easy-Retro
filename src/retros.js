@@ -40,11 +40,11 @@ let columns = req.body.column_names.map((name)=>{
 })
 let retro_id = uuidv4()
 let user_id =req.params.user_id
-
 return knex.transaction(function (t) {
   return knex('column_table')
   .transacting(t)  
   .insert(columns, 'column_id')
+    .catch(t.rollback)
     .then((column_ids) => knex('retro')
       .transacting(t)
       .insert({
@@ -52,12 +52,18 @@ return knex.transaction(function (t) {
         retro_name: retro_name, 
         column_ids: JSON.stringify(column_ids),
         tags: tags
-      }, "retro_id"))
-      .then(retro_id => { 
+      }))
+      .catch(t.rollback)
+      .then(() => knex('user_retro')
+      .transacting(t)
+      .insert({
+        user_id: user_id, 
+        retro_id: retro_id
+      }))
+      .then(() => { 
         t.commit 
-        return retro_id
       })
-      .then((retro_id) => res.json(retro_id[0]))
+      .then(() => res.json(retro_id))
       .catch(t.rollback)
 })
 }
