@@ -22,4 +22,21 @@ async function fetchColumnsByRetroId(retro_id) {
     .whereIn('column_id', column_ids)
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId }
+function insertNewColumn(retro_id) {
+  return knex('column_table')
+    .insert({ column_name: 'New Column' }, 'column_id') // New column [42]
+    .then((new_column_ids) => {
+      return knex('retro')
+        .where({ retro_id })
+        .select('column_ids') // [[1, 2, 3]]
+        .then((retroObj) => {
+          console.log('retroObj', retroObj)
+          const columnArray = retroObj[0].column_ids.concat(new_column_ids); // [1, 2, 3] + [42] = [1, 2, 3, 42]
+          return knex('retro')
+            .where({ retro_id })
+            .update({ column_ids: JSON.stringify(columnArray) })
+        })
+    })
+}
+
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, insertNewColumn }
