@@ -27,7 +27,7 @@ app.get('/users/:user_id', getUserById)
 app.get('/users/:user_id/retros', getRetrosByUserId)
 
 app.get('/retros', getRetros)
-app.post('/retros/create', postRetro)
+app.post('/retros/create/:user_id', postRetro)
 app.get('/retros/:retro_id', getRetroById)
 
 new SocketServer(server)
