@@ -5,7 +5,7 @@ module.exports = {
 
   test: {
     client: 'pg',
-    connection: `postgres://${process.env.PG_USER}:${process.env.APP_DB_ADMIN_PASSWORD}@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PG_DATABASE}`
+    connection: `postgres://${process.env.PG_USER}:${process.env.APP_DB_ADMIN_PASSWORD}@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PG_TEST_DATABASE}`
   },
   development: {
     client: 'pg',
