@@ -1,9 +1,8 @@
 const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
-const { fetchColumnsByRetroId } = require('./columns')
+const { fetchColumnsByRetroId, insertNewColumn } = require('./columns')
 const { fetchCardsByRetroId } = require('./cards')
 const { fetchCommentsByRetroId } = require('./comments')
-
 
 module.exports = class SocketServer {
   constructor(server) {
@@ -18,6 +17,7 @@ module.exports = class SocketServer {
     this.io.on('connection', (socket) => {
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
+      socket.on('createColumn', (retro_id) => this.createColumn(retro_id))
     });
   }
 
@@ -52,16 +52,15 @@ module.exports = class SocketServer {
     socket.emit('initRetro', { retro, columns, cards, comments })
   }
 
-  columnAdded(retro_id, column) {
-    this.io.to(retro_id).emit('columnAdded', column)
+  async createColumn(retro_id) {
+    await insertNewColumn(retro_id)
+    let newColumns = await fetchColumnsByRetroId(retro_id)
+    console.log('new columns', newColumns)
+    this.columnsUpdated(retro_id, newColumns)
   }
 
-  columnUpdated(retro_id, column) {
-    this.io.to(retro_id).emit('columnUpdated', column)
-  }
-
-  columnDeleted(retro_id, columnId) {
-    this.io.to(retro_id).emit('columnDeleted', columnId)
+  columnsUpdated(retro_id, columns) {
+    this.io.to(retro_id).emit('columnsUpdated', columns)
   }
 
   cardAdded(retro_id, card) {
