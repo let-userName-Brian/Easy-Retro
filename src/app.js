@@ -5,6 +5,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const { getRetros, getRetroById, getRetrosByUserId, postRetro } = require('./retros')
 const { getUsers, getUserById } = require('./users')
+const jwt = require('jsonwebtoken');
 const SocketServer = require('./socketServer');
 
 app.use(cors())
@@ -17,7 +18,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/header', (req, res) => {
-  res.json(req.headers)
+  let token = jwt.decode(req.headers.jwt)
+  res.json(token)
 })
 
 app.get('/users', getUsers)
