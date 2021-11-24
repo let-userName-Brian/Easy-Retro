@@ -1,33 +1,33 @@
-const express = require('express')();
-const expressUse = require('express');
-const app = require('http').createServer(express);
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
 const cors = require('cors')
 const morgan = require('morgan')
 const { getRetros, getRetroById, getRetrosByUserId, postRetro } = require('./retros')
 const { getUsers, getUserById } = require('./users')
 const SocketServer = require('./socketServer');
 
-express.use(cors())
-express.use(morgan('dev'))
-express.use(expressUse.json())
-express.use(expressUse.urlencoded({ extended: true }))
+app.use(cors())
+app.use(morgan('dev'))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-express.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).send('Welcome to Super Mario World!');
 });
 
-express.get('/header', (req, res) => {
+app.get('/header', (req, res) => {
   res.json(req.headers)
 })
 
-express.get('/users', getUsers)
-express.get('/users/:user_id', getUserById)
-express.get('/users/:user_id/retros', getRetrosByUserId)
+app.get('/users', getUsers)
+app.get('/users/:user_id', getUserById)
+app.get('/users/:user_id/retros', getRetrosByUserId)
 
-express.get('/retros', getRetros)
-express.post('/retros/create', postRetro)
-express.get('/retros/:retro_id', getRetroById)
+app.get('/retros', getRetros)
+app.post('/retros/create', postRetro)
+app.get('/retros/:retro_id', getRetroById)
 
-new SocketServer(app)
+new SocketServer(server)
 
-module.exports = { app };
+module.exports = { server };
