@@ -40,19 +40,16 @@ module.exports = class SocketServer {
 
   /**
    * Sends entire retro payload to the room
-   * @param {string} retro_id
+   * @param {*} socket the socket connection
+   * @param {string} retro_id the retro UUID
    */
   async sendRetroToUser(socket, retro_id) {
-    // Get entire retro obj from db
     let retro = await fetchRetro(retro_id)
     let columns = await fetchColumnsByRetroId(retro_id)
     let cards = await fetchCardsByRetroId(retro_id)
-    let comments /*= await fetchCommentsByRetroId(card.card_id)*/
+    let comments = await fetchCommentsByRetroId(retro_id)
 
     socket.emit('initRetro', { retro, columns, cards, comments })
-    //socket.emit('receivedColumns', columns)
-    //socket.emit('receivedCards', cards)
-    //socket.emit('receivedComments', comments)
   }
 
   columnAdded(retro_id, column) {
