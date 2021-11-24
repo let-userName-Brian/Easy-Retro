@@ -1,11 +1,11 @@
 const request = require('supertest');
 const { knex } = require('./knexConnector')
+var { server } = require('./app');
 
 describe('loading express', function () {
-  var { app } = require('./app');
 
   afterEach(function (done) {
-    app.close();
+    server.close();
     done()
   });
 
@@ -13,8 +13,8 @@ describe('loading express', function () {
     knex.destroy();
   })
 
-  it('responds to /users with json', function testUsers(done) {
-    request(app)
+  it('responds to /users with json', done => {
+    request(server)
       .get('/users')
       .expect(200, done)
   });
