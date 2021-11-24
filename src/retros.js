@@ -39,6 +39,7 @@ let columns = req.body.column_names.map((name)=>{
   return {column_name: name}
 })
 let retro_id = uuidv4()
+let user_id =req.params.user_id
 
 return knex.transaction(function (t) {
   return knex('column_table')
