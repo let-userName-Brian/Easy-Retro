@@ -3,7 +3,7 @@ const loremHipsum = require('lorem-hipsum')
 exports.seed = function (knex) {
   let arr = []
 
-  for (let card_id = 1; card_id < 50; card_id++) {
+  for (let card_id = 1; card_id < 31; card_id++) {
     let votes = []
     let maxVotes = Math.floor(Math.random() * 10)
     for (let v = 0; v < maxVotes; v++) {
@@ -11,7 +11,6 @@ exports.seed = function (knex) {
     }
 
     arr.push({
-      card_id,
       card_text: loremHipsum({
         count: 1,
         units: 'sentences',
