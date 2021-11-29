@@ -11,4 +11,10 @@ async function getUserById(req, res) {
   res.status(200).json(data[0])
 }
 
+async function fetchUserNameById(user_id) {
+  return knex('user')
+    .select('user_name')
+    .where({ user_id })
+}
+
 module.exports = { getUsers, getUserById }
