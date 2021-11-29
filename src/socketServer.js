@@ -1,7 +1,7 @@
 const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
-const { fetchColumnsByRetroId, insertNewColumn } = require('./columns')
-const { fetchCardsByRetroId, insertNewCard } = require('./cards')
+const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById } = require('./columns')
+const { fetchCardsByRetroId, fetchCardsByColId, insertNewCard } = require('./cards')
 const { fetchCommentsByRetroId } = require('./comments')
 
 module.exports = class SocketServer {
@@ -76,12 +76,16 @@ module.exports = class SocketServer {
   async cardAdded(retro_id, column_id, user_id) {
     //needs to grab user_id as well
     await insertNewCard(column_id, user_id)
-    let newCards = await fetchCardsByRetroId(retro_id)
-    this.cardUpdated(retro_id, newCards)
+    let cards = await fetchCardsByColId(column_id)
+    this.cardUpdated(retro_id, cards, column_id)
   }
-
-  cardUpdated(retro_id, cards) {
-    this.io.to(retro_id).emit('cardUpdated', cards)
+  /**
+   * all retros cards
+   * @param {*} retro_id
+   * @param {*} cards
+   */
+  cardUpdated(retro_id, cards, column_id) {
+    this.io.to(retro_id).emit('cardUpdated', { cards, column_id })
   }
 
   cardDeleted(retro_id, cardId) {
