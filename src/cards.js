@@ -15,6 +15,12 @@ async function fetchCardsByRetroId(retro_id) {
     .select('card.*', 'user_profile.user_name')
 }
 
+async function fetchCardsByColId(column_id) {
+  return knex('column_table')
+    .select('card_ids')
+    .where({ column_id })
+}
+
 /**
  * @param {*} column_id
  * @param {string} user_id the uuid of the user. is not yet implemented
@@ -28,4 +34,4 @@ async function insertNewCard(column_id, user_id) {
   })
 }
 
-module.exports = { fetchCardsByRetroId, insertNewCard }
+module.exports = { fetchCardsByRetroId, fetchCardsByColId, insertNewCard }
