@@ -34,6 +34,7 @@ async function postRetro(req, res) {
   //may need to revise if it gets wacky (Chasten)
   //insert the column id and name into the column table
   let tags = req.body.tags
+  let max_votes = req.body.max_votes
   let retro_name = req.body.retro_name
   let columns = req.body.column_names.map((name) => {
     return { column_name: name }
@@ -48,7 +49,8 @@ async function postRetro(req, res) {
           retro_id: retro_id,
           retro_name: retro_name,
           column_ids: column_ids,
-          tags: tags
+          tags: tags,
+          max_votes: max_votes
         }))
       .then(() => t('user_retro')
         .insert({ user_id, retro_id }))
