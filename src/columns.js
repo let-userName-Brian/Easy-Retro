@@ -16,27 +16,28 @@ async function getColumnsByRetroId(req, res) {
  */
 async function fetchColumnsByRetroId(retro_id) {
   let retro = await fetchRetro(retro_id)
-  let column_ids = retro.column_ids
   return knex('column_table')
     .select('*')
-    .whereIn('column_id', column_ids)
+    .whereIn('column_id', retro.column_ids)
 }
 
-function insertNewColumn(retro_id) {
+async function fetchColumnById(column_id) {
   return knex('column_table')
-    .insert({ column_name: 'New Column' }, 'column_id') // New column [42]
-    .then((new_column_ids) => {
-      return knex('retro')
-        .where({ retro_id })
-        .select('column_ids') // [[1, 2, 3]]
-        .then((retroObj) => {
-          console.log('retroObj', retroObj)
-          const columnArray = retroObj[0].column_ids.concat(new_column_ids); // [1, 2, 3] + [42] = [1, 2, 3, 42]
-          return knex('retro')
-            .where({ retro_id })
-            .update({ column_ids: JSON.stringify(columnArray) })
-        })
-    })
+    .select('*')
+    .where({ column_id })
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, insertNewColumn }
+/**
+ * refactor this to cards.js implementation
+ * @param {*} retro_id
+ * @returns inserts a new column into the provided retro
+ */
+async function insertNewColumn(retro_id) {
+  return await knex.transaction(async (t) => {
+    return await t('column_table')
+      .insert({ column_name: 'New Column' }, 'column_id')
+      .then(async (new_column_id) => knex.raw('update retro set column_ids = column_ids || ? where retro_id = ?;', [new_column_id, retro_id]))
+  })
+}
+
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn }

@@ -5,7 +5,7 @@ exports.up = function (knex) {
     table.uuid('user_id') // User ID identifying who created the card
       .references('user_id').inTable('user_profile')
       .onUpdate('CASCADE').onDelete('CASCADE')
-    table.json('votes') // Array of objects { user_id: vote_type }
+    table.json('votes').defaultTo([]) // Array of objects { user_id: vote_type }, default value may cause us problems
     table.timestamps(true, true); // adds created_at and updated_at
   });
 };

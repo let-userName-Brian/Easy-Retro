@@ -1,7 +1,7 @@
 const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
-const { fetchColumnsByRetroId, insertNewColumn } = require('./columns')
-const { fetchCardsByRetroId } = require('./cards')
+const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById } = require('./columns')
+const { fetchCardsByRetroId, fetchCardsByColId, insertNewCard } = require('./cards')
 const { fetchCommentsByRetroId } = require('./comments')
 
 module.exports = class SocketServer {
@@ -17,7 +17,8 @@ module.exports = class SocketServer {
     this.io.on('connection', (socket) => {
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
-      socket.on('createColumn', (retro_id) => this.createColumn(retro_id))
+      socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
+      socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
     });
   }
 
@@ -52,23 +53,39 @@ module.exports = class SocketServer {
     socket.emit('initRetro', { retro, columns, cards, comments })
   }
 
-  async createColumn(retro_id) {
+  async columnAdded(retro_id) {
     await insertNewColumn(retro_id)
     let newColumns = await fetchColumnsByRetroId(retro_id)
-    console.log('new columns', newColumns)
-    this.columnsUpdated(retro_id, newColumns)
+    // console.log('new columns', newColumns)
+    this.columnUpdated(retro_id, newColumns)
   }
 
-  columnsUpdated(retro_id, columns) {
-    this.io.to(retro_id).emit('columnsUpdated', columns)
+  columnUpdated(retro_id, columns) {
+    this.io.to(retro_id).emit('columnUpdated', columns)
   }
 
-  cardAdded(retro_id, card) {
-    this.io.to(retro_id).emit('cardAdded', card)
+  columnDeleted(retro_id, cardId) {
+    this.io.to(retro_id).emit('cardDeleted', cardId)
+  }
+  /**
+   * adds card to a column
+   * @param {*} retro_id
+   * @param {*} column_id
+   * @param {*} user_id
+   */
+  async cardAdded(retro_id, column_id, user_id) {
+    await insertNewCard(column_id, user_id)
+    let cards = await fetchCardsByColId(column_id)
+    this.cardUpdated(retro_id, cards, column_id)
   }
 
-  cardUpdated(retro_id, card) {
-    this.io.to(retro_id).emit('cardUpdated', card)
+  /**
+   * all cols cards
+   * @param {*} retro_id
+   * @param {*} cards
+   */
+  cardUpdated(retro_id, cards, column_id) {
+    this.io.to(retro_id).emit('cardUpdated', { cards, column_id })
   }
 
   cardDeleted(retro_id, cardId) {

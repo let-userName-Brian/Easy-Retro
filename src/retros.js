@@ -23,8 +23,8 @@ async function fetchRetro(retro_id) {
 async function getRetrosByUserId(req, res) {
   let user_id = req.params.user_id
   knex('retro')
-    .innerJoin('user_retro','retro.retro_id', 'user_retro.retro_id' )
-    .where({ user_id})
+    .innerJoin('user_retro', 'retro.retro_id', 'user_retro.retro_id')
+    .where({ user_id })
     .then(data => res.json(data))
     .catch(err => console.log(err))
 }
@@ -33,39 +33,27 @@ async function getRetrosByUserId(req, res) {
 async function postRetro(req, res) {
   //may need to revise if it gets wacky (Chasten)
   //insert the column id and name into the column table
-let tags = req.body.tags
-let retro_name = req.body.retro_name
-let columns = req.body.column_names.map((name)=>{
-  return {column_name: name}
-})
-let retro_id = uuidv4()
-let user_id =req.params.user_id
-return knex.transaction(function (t) {
-  return knex('column_table')
-  .transacting(t)  
-  .insert(columns, 'column_id')
-    .catch(t.rollback)
-    .then((column_ids) => knex('retro')
-      .transacting(t)
-      .insert({
-        retro_id: retro_id, 
-        retro_name: retro_name, 
-        column_ids: JSON.stringify(column_ids),
-        tags: tags
-      }))
-      .catch(t.rollback)
-      .then(() => knex('user_retro')
-      .transacting(t)
-      .insert({
-        user_id: user_id, 
-        retro_id: retro_id
-      }))
-      .then(() => { 
-        t.commit 
-      })
+  let tags = req.body.tags
+  let retro_name = req.body.retro_name
+  let columns = req.body.column_names.map((name) => {
+    return { column_name: name }
+  })
+  let retro_id = uuidv4()
+  let user_id = req.params.user_id
+  return knex.transaction(function (t) {
+    return t('column_table')
+      .insert(columns, 'column_id')
+      .then((column_ids) => t('retro')
+        .insert({
+          retro_id: retro_id,
+          retro_name: retro_name,
+          column_ids: column_ids,
+          tags: tags
+        }))
+      .then(() => t('user_retro')
+        .insert({ user_id, retro_id }))
       .then(() => res.json(retro_id))
-      .catch(t.rollback)
-})
+  })
 }
 
 module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro }
