@@ -55,9 +55,7 @@ module.exports = class SocketServer {
 
   async columnAdded(retro_id) {
     let newColumnIds = await insertNewColumn(retro_id)
-    console.log('new column ids', newColumnIds[0])
     let newColumns = await fetchColumnsByRetroId(retro_id)
-    // console.log('new columns', newColumns)
     this.columnUpdated(retro_id, newColumns, newColumnIds[0])
   }
 
