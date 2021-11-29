@@ -74,13 +74,13 @@ module.exports = class SocketServer {
    * @param {*} user_id
    */
   async cardAdded(retro_id, column_id, user_id) {
-    //needs to grab user_id as well
     await insertNewCard(column_id, user_id)
     let cards = await fetchCardsByColId(column_id)
     this.cardUpdated(retro_id, cards, column_id)
   }
+
   /**
-   * all retros cards
+   * all cols cards
    * @param {*} retro_id
    * @param {*} cards
    */

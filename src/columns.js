@@ -21,6 +21,11 @@ async function fetchColumnsByRetroId(retro_id) {
     .whereIn('column_id', retro.column_ids)
 }
 
+async function fetchColumnById(column_id) {
+  return knex('column_table')
+    .select('*')
+    .where({ column_id })
+}
 
 /**
  * refactor this to cards.js implementation
@@ -35,4 +40,4 @@ async function insertNewColumn(retro_id) {
   })
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, insertNewColumn }
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn }
