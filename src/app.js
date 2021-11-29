@@ -14,7 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-  res.status(200).send('Welcome to Super Mario World!');
+  res.status(200).send('Welcome to Super Mario World! \nThis is the backend u dummy! Go to localhost:3000!');
 });
 
 app.get('/header', (req, res) => {
