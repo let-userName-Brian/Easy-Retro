@@ -30,13 +30,14 @@ async function fetchColumnById(column_id) {
 /**
  * refactor this to cards.js implementation
  * @param {*} retro_id
- * @returns inserts a new column into the provided retro
  */
 async function insertNewColumn(retro_id) {
   return await knex.transaction(async (t) => {
     return await t('column_table')
       .insert({ column_name: 'New Column' }, 'column_id')
-      .then(async (new_column_id) => knex.raw('update retro set column_ids = column_ids || ? where retro_id = ?;', [new_column_id, retro_id]))
+      .then(async (new_column_id) => knex('retro')
+        .where({ retro_id })
+        .update('column_ids', knex.raw('column_ids || ?', [new_column_id]), 'column_ids'))
   })
 }
 

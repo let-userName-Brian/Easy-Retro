@@ -54,14 +54,15 @@ module.exports = class SocketServer {
   }
 
   async columnAdded(retro_id) {
-    await insertNewColumn(retro_id)
+    let newColumnIds = await insertNewColumn(retro_id)
+    console.log('new column ids', newColumnIds[0])
     let newColumns = await fetchColumnsByRetroId(retro_id)
     // console.log('new columns', newColumns)
-    this.columnUpdated(retro_id, newColumns)
+    this.columnUpdated(retro_id, newColumns, newColumnIds[0])
   }
 
-  columnUpdated(retro_id, columns) {
-    this.io.to(retro_id).emit('columnUpdated', columns)
+  columnUpdated(retro_id, columns, column_ids) {
+    this.io.to(retro_id).emit('columnUpdated', { columns, column_ids })
   }
 
   columnDeleted(retro_id, cardId) {
