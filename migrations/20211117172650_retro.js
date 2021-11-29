@@ -5,6 +5,7 @@ exports.up = function (knex) {
     table.specificType('column_ids', 'int[]') // array of column IDs, specifying which columns are in the retro, and what order e.g. [1, 3, 2]
     table.json('retro_options').defaultTo({}) // object of key-value pairs, defining options for the retro
     table.specificType('tags', 'text[]')
+    table.integer('max_votes').defaultTo(0)
     table.timestamps(true, true); // adds created_at and updated_at
   });
 };
