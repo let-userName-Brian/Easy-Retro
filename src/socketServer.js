@@ -15,6 +15,7 @@ module.exports = class SocketServer {
 
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
+      console.log('New connection from', socket.id, socket.conn)
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
       socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
