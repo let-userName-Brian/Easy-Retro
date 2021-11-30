@@ -41,4 +41,12 @@ async function insertNewColumn(retro_id) {
   })
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn }
+async function updateColName(column_id, new_name) {
+  return await knex.transaction(async (t) => {
+    return await t('column_table')
+      .where({ column_id })
+      .update({ column_name: new_name }, 'column_name')
+  })
+}
+
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, updateColName }

@@ -1,6 +1,6 @@
 const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
-const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById } = require('./columns')
+const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById, updateColName } = require('./columns')
 const { fetchCardsByRetroId, fetchCardsByColId, insertNewCard } = require('./cards')
 const { fetchCommentsByRetroId } = require('./comments')
 
@@ -15,11 +15,11 @@ module.exports = class SocketServer {
 
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
-      console.log('New connection from', socket.id, socket.conn)
       this.io.emit('newConnection', socket.id)
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
       socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
+      socket.on('columnRenamed', ({ retro_id, column_id, colName }) => this.columnRenamed(retro_id, column_id, colName))
       socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
     });
   }
@@ -60,6 +60,16 @@ module.exports = class SocketServer {
     let newColumnIds = await insertNewColumn(retro_id)
     let newColumns = await fetchColumnsByRetroId(retro_id)
     this.columnUpdated(retro_id, newColumns, newColumnIds[0])
+  }
+
+  async columnRenamed(retro_id, column_id, newName) {
+    let updatedColName = await updateColName(column_id, newName)
+    console.log('updatedColName:', updatedColName[0])
+    this.columnNameUpdated(retro_id, column_id, updatedColName[0])
+  }
+
+  columnNameUpdated(retro_id, column_id, newName) {
+    this.io.to(retro_id).emit('columnNameUpdated', { column_id, newName })
   }
 
   columnUpdated(retro_id, columns, column_ids) {
