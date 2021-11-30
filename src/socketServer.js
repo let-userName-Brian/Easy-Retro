@@ -16,6 +16,7 @@ module.exports = class SocketServer {
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
       console.log('New connection from', socket.id, socket.conn)
+      this.io.emit('newConnection', socket.id)
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
       socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
@@ -46,6 +47,7 @@ module.exports = class SocketServer {
    * @param {string} retro_id the retro UUID
    */
   async sendRetroToUser(socket, retro_id) {
+    console.log('Sending retro to user')
     let retro = await fetchRetro(retro_id)
     let columns = await fetchColumnsByRetroId(retro_id)
     let cards = await fetchCardsByRetroId(retro_id)
