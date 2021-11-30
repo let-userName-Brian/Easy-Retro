@@ -45,6 +45,7 @@ module.exports = class SocketServer {
    * @param {string} retro_id the retro UUID
    */
   async sendRetroToUser(socket, retro_id) {
+    console.log('Sending retro to user')
     let retro = await fetchRetro(retro_id)
     let columns = await fetchColumnsByRetroId(retro_id)
     let cards = await fetchCardsByRetroId(retro_id)
