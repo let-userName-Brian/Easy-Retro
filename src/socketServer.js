@@ -72,8 +72,9 @@ module.exports = class SocketServer {
     this.io.to(retro_id).emit('columnNameUpdated', { column_id, newName })
   }
 
-  columnUpdated(retro_id, columns, column_ids) {
-    this.io.to(retro_id).emit('columnUpdated', { columns, column_ids })
+  async columnUpdated(retro_id, columns, column_ids) {
+    let retro = await fetchRetro(retro_id)
+    this.io.to(retro_id).emit('columnUpdated', { retro, columns, column_ids })
   }
 
   async columnDeleted(retro_id, column_id) {
