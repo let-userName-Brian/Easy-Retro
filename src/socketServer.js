@@ -85,12 +85,8 @@ module.exports = class SocketServer {
   }
 
   async columnRenamed(retro_id, column_id, newName) {
-    let updatedColName = await updateColName(column_id, newName)
-    this.columnNameUpdated(retro_id, column_id, updatedColName[0])
-  }
-
-  columnNameUpdated(retro_id, column_id, column_name) {
-    this.io.to(retro_id).emit('columnNameUpdated', { column_id, column_name })
+    let column = await updateColName(column_id, newName)
+    this.io.to(this.retro_id).emit('columnNameUpdated', { column })
   }
 
   async columnUpdated(retro_id, columns) {
@@ -117,8 +113,8 @@ module.exports = class SocketServer {
   }
 
   async changeCardText(card_id, card_text) {
-    await updateCardText(card_id, card_text)
-    this.io.to(this.retro_id).emit('cardTextUpdated', { card_id, card_text })
+    let card = await updateCardText(card_id, card_text)
+    this.io.to(this.retro_id).emit('cardTextUpdated', { card })
   }
 
   /**
