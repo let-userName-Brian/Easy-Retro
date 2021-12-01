@@ -13,15 +13,28 @@ module.exports = class SocketServer {
       }
     });
 
+    let retro_id
+
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
       this.io.emit('newConnection', socket.id)
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
+
       socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
       socket.on('columnRenamed', ({ retro_id, column_id, colName }) => this.columnRenamed(retro_id, column_id, colName))
-      socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
       socket.on('columnDeleted', ({ retroId, column_id }) => this.columnDeleted(retroId, column_id))
+
+      socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
+      socket.on('removeCard', ({ card_id }) => this.removeCard(card_id))
+      socket.on('changeCardText', ({ card_id, card_text }) => this.changeCardText(card_id, card_text))
+
+      socket.on('addComment', ({ user_id, card_id, comment_text }) => this.addComment(user_id, card_id, comment_text))
+      socket.on('removeComment', ({ comment_id }) => this.removeComment(comment_id))
+
+      socket.on('addVote', ({ user_id, card_id, vote_type }) => this.addVote(user_id, card_id, vote_type))
+      socket.on('removeVote', ({ user_id, card_id, vote_type }) => this.removeVote(user_id, card_id, vote_type))
+
     });
   }
 
