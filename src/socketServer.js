@@ -91,7 +91,7 @@ module.exports = class SocketServer {
     await insertNewCard(column_id, user_id)
     let cards = await fetchCardsByColId(column_id)
     let card_ids = await fetchCardIdsByColId(column_id)
-    this.cardUpdated(retro_id, cards, column_id)
+    this.cardUpdated(retro_id, cards, card_ids, column_id)
   }
 
   /**
