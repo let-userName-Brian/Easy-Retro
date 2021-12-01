@@ -46,18 +46,18 @@ module.exports = class SocketServer {
   /**
    * Request from the client to join a room by retro ID
    * @param {string} user_id
-   * @param {string} retroId
+   * @param {string} retro_id
    */
-  async joinRetro(socket, { user_id, retroId }) {
+  async joinRetro(socket, { user_id, retro_id }) {
     // Put the client into a room with the same name as the retro id
-    socket.join(retroId);
-    console.log('User has joined retro. ', { user_id, retroId })
+    socket.join(retro_id);
+    console.log('User has joined retro. ', { user_id, retro_id })
 
     // Send a broadcast to the room that the user has joined
-    this.io.to(retroId).emit('userJoinedRetro', user_id)
+    this.io.to(retro_id).emit('userJoinedRetro', user_id)
 
     // Send that user the retro objects
-    await this.sendRetroToUser(socket, retroId)
+    await this.sendRetroToUser(socket, retro_id)
   }
 
   /**
