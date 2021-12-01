@@ -3,6 +3,7 @@ const { fetchRetro } = require('./retros')
 const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById, updateColName, deleteColumn } = require('./columns')
 const { fetchCardsByRetroId, fetchCardsByColId, fetchCardIdsByColId, insertNewCard } = require('./cards')
 const { fetchCommentsByRetroId } = require('./comments')
+const { updateAddVote, updateRemoveVote } = require('./votes')
 
 module.exports = class SocketServer {
   constructor(server) {
@@ -13,15 +14,32 @@ module.exports = class SocketServer {
       }
     });
 
+    let retro_id
+
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
       this.io.emit('newConnection', socket.id)
+
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
-      socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
-      socket.on('columnRenamed', ({ retro_id, column_id, colName }) => this.columnRenamed(retro_id, column_id, colName))
-      socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
+
+      // Listen for column events from the client
+      socket.on('columnAdded', ({ retro_id }) => this.columnAdded(retro_id))
+      socket.on('columnRenamed', ({ retro_id, column_id, column_name }) => this.columnRenamed(retro_id, column_id, column_name))
       socket.on('columnDeleted', ({ retroId, column_id }) => this.columnDeleted(retroId, column_id))
+
+      // Listen for card events from the client
+      socket.on('cardAdded', ({ retro_id, column_id, user_id }) => this.cardAdded(retro_id, column_id, user_id))
+      socket.on('removeCard', ({ card_id }) => this.removeCard(card_id))
+      socket.on('changeCardText', ({ card_id, card_text }) => this.changeCardText(card_id, card_text))
+
+      // Listen for comment events from the client
+      socket.on('addComment', ({ user_id, card_id, comment_text }) => this.addComment(user_id, card_id, comment_text))
+      socket.on('removeComment', ({ comment_id }) => this.removeComment(comment_id))
+
+      // Listen for vote events from the client
+      socket.on('addVote', ({ user_id, card_id, vote_type }) => this.addVote(user_id, card_id, vote_type))
+      socket.on('removeVote', ({ user_id, card_id, vote_type }) => this.removeVote(user_id, card_id, vote_type))
     });
   }
 
@@ -118,5 +136,15 @@ module.exports = class SocketServer {
 
   commentDeleted(retro_id, commentId) {
     this.io.to(retro_id).emit('commentDeleted', commentId)
+  }
+
+  addVote(user_id, card_id, vote_type) {
+    updateAddVote(user_id, card_id, vote_type)
+    let newCard = fetchCardByCardId(card_id)
+
+  }
+
+  removeVote(user_id, card_id, vote_type) {
+
   }
 }

@@ -40,4 +40,11 @@ async function insertNewCard(column_id, user_id) {
   })
 }
 
-module.exports = { fetchCardsByRetroId, fetchCardsByColId, insertNewCard, fetchCardIdsByColId }
+async function fetchCardByCardId(card_id) {
+  return knex('card')
+    .select('*')
+    .where({ card_id })
+    .then(cards => cards[0])
+}
+
+module.exports = { fetchCardsByRetroId, fetchCardsByColId, insertNewCard, fetchCardIdsByColId, fetchCardByCardId }
