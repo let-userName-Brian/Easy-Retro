@@ -25,6 +25,7 @@ async function fetchColumnById(column_id) {
   return knex('column_table')
     .select('*')
     .where({ column_id })
+    .then(columns => columns[0])
 }
 
 /**
