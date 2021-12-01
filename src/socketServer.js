@@ -109,8 +109,8 @@ module.exports = class SocketServer {
   async cardAdded(retro_id, column_id, user_id) {
     await insertNewCard(column_id, user_id)
     let cards = await fetchCardsByColId(column_id)
-    let card_ids = await fetchCardIdsByColId(column_id)
-    this.cardUpdated(retro_id, cards, card_ids, column_id)
+    let column = await fetchColumnById(column_id)
+    this.cardUpdated(retro_id, cards, column)
   }
 
   /**
@@ -118,8 +118,8 @@ module.exports = class SocketServer {
    * @param {*} retro_id
    * @param {*} cards
    */
-  cardUpdated(retro_id, cards, card_ids, column_id) {
-    this.io.to(retro_id).emit('cardUpdated', { cards, card_ids, column_id })
+  cardUpdated(retro_id, cards, column) {
+    this.io.to(retro_id).emit('cardUpdated', { cards, column })
   }
 
   cardDeleted(retro_id, cardId) {
