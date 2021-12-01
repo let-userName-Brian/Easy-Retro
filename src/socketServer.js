@@ -18,28 +18,28 @@ module.exports = class SocketServer {
       this.io.emit('newConnection', socket.id)
       // Establish all connection points that the client may send to the server
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
-      socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
-      socket.on('columnRenamed', ({ retro_id, column_id, colName }) => this.columnRenamed(retro_id, column_id, colName))
-      socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
-      socket.on('columnDeleted', ({ retroId, column_id }) => this.columnDeleted(retroId, column_id))
+      socket.on('columnAdded', ({ retro_id }) => this.columnAdded(retro_id))
+      socket.on('columnRenamed', ({ retro_id, column_id, column_name }) => this.columnRenamed(retro_id, column_id, column_name))
+      socket.on('cardAdded', ({ retro_id, column_id, user_id }) => this.cardAdded(retro_id, column_id, user_id))
+      socket.on('columnDeleted', ({ retro_id, column_id }) => this.columnDeleted(retro_id, column_id))
     });
   }
 
   /**
    * Request from the client to join a room by retro ID
    * @param {string} user_id
-   * @param {string} retroId
+   * @param {string} retro_id
    */
-  async joinRetro(socket, { user_id, retroId }) {
+  async joinRetro(socket, { user_id, retro_id }) {
     // Put the client into a room with the same name as the retro id
-    socket.join(retroId);
-    console.log('User has joined retro. ', { user_id, retroId })
+    socket.join(retro_id);
+    console.log('User has joined retro. ', { user_id, retro_id })
 
     // Send a broadcast to the room that the user has joined
-    this.io.to(retroId).emit('userJoinedRetro', user_id)
+    this.io.to(retro_id).emit('userJoinedRetro', user_id)
 
     // Send that user the retro objects
-    await this.sendRetroToUser(socket, retroId)
+    await this.sendRetroToUser(socket, retro_id)
   }
 
   /**
