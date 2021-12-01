@@ -52,7 +52,8 @@ async function fetchCardByCardId(card_id) {
 async function updateCardText(card_id, card_text) {
   return await knex('card')
     .where({ card_id })
-    .update({ card_text })
+    .update({ card_text }, '*')
+    .then(cards => cards[0])
 }
 
 module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, insertNewCard, fetchCardIdsByColumnId, fetchCardByCardId, updateCardText }
