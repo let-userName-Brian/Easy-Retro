@@ -1,12 +1,13 @@
 const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
 const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById, updateColName, deleteColumn } = require('./columns')
-const { fetchCardsByRetroId, fetchCardsByColId, fetchCardIdsByColId, insertNewCard } = require('./cards')
+const { fetchCardsByRetroId, fetchCardsByColumnId, insertNewCard, fetchCardByCardId } = require('./cards')
 const { fetchCommentsByRetroId } = require('./comments')
 const { updateAddVote, updateRemoveVote } = require('./votes')
 
 module.exports = class SocketServer {
   constructor(server) {
+    this.retro_id = null
     this.io = socketIo(server, {
       cors: {
         origin: "*",
@@ -14,7 +15,6 @@ module.exports = class SocketServer {
       }
     });
 
-    let retro_id
 
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
@@ -52,6 +52,9 @@ module.exports = class SocketServer {
     // Put the client into a room with the same name as the retro id
     socket.join(retro_id);
     console.log('User has joined retro. ', { user_id, retro_id })
+
+    // Set our internal retro_id
+    this.retro_id = retro_id
 
     // Send a broadcast to the room that the user has joined
     this.io.to(retro_id).emit('userJoinedRetro', user_id)
@@ -108,7 +111,7 @@ module.exports = class SocketServer {
    */
   async cardAdded(retro_id, column_id, user_id) {
     await insertNewCard(column_id, user_id)
-    let cards = await fetchCardsByColId(column_id)
+    let cards = await fetchCardsByColumnId(column_id)
     let column = await fetchColumnById(column_id)
     this.cardUpdated(retro_id, cards, column)
   }
