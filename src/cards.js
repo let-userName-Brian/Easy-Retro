@@ -15,9 +15,15 @@ async function fetchCardsByRetroId(retro_id) {
     .select('card.*', 'user_profile.user_name')
 }
 
-async function fetchCardsByColId(column_id) {
+async function fetchCardIDsByColId(column_id) {
   return knex('column_table')
     .select('card_ids')
+    .where({ column_id })
+}
+
+async function fetchCardsByColId(column_id) {
+  return knex('column_table')
+    .select('*')
     .where({ column_id })
 }
 
@@ -34,4 +40,4 @@ async function insertNewCard(column_id, user_id) {
   })
 }
 
-module.exports = { fetchCardsByRetroId, fetchCardsByColId, insertNewCard }
+module.exports = { fetchCardsByRetroId, fetchCardsByColId, insertNewCard, fetchCardIDsByColId }
