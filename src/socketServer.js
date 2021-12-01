@@ -7,6 +7,7 @@ const { updateAddVote, updateRemoveVote } = require('./votes')
 
 module.exports = class SocketServer {
   constructor(server) {
+    this.retro_id = null
     this.io = socketIo(server, {
       cors: {
         origin: "*",
@@ -14,7 +15,6 @@ module.exports = class SocketServer {
       }
     });
 
-    let retro_id
 
     // This is called when a client joins the server
     this.io.on('connection', (socket) => {
@@ -52,6 +52,9 @@ module.exports = class SocketServer {
     // Put the client into a room with the same name as the retro id
     socket.join(retro_id);
     console.log('User has joined retro. ', { user_id, retro_id })
+
+    // Set our internal retro_id
+    this.retro_id = retro_id
 
     // Send a broadcast to the room that the user has joined
     this.io.to(retro_id).emit('userJoinedRetro', user_id)
