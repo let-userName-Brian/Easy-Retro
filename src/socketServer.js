@@ -20,22 +20,22 @@ module.exports = class SocketServer {
       socket.on('joinRetro', async (payload) => await this.joinRetro(socket, payload))
       socket.on('columnAdded', (retro_id) => this.columnAdded(retro_id))
       socket.on('columnRenamed', ({ retro_id, column_id, colName }) => this.columnRenamed(retro_id, column_id, colName))
-      socket.on('cardAdded', ({ retro_id, column_id, userId }) => this.cardAdded(retro_id, column_id, userId))
+      socket.on('cardAdded', ({ retro_id, column_id, user_id }) => this.cardAdded(retro_id, column_id, user_id))
     });
   }
 
   /**
    * Request from the client to join a room by retro ID
-   * @param {string} userId
+   * @param {string} user_id
    * @param {string} retroId
    */
-  async joinRetro(socket, { userId, retroId }) {
+  async joinRetro(socket, { user_id, retroId }) {
     // Put the client into a room with the same name as the retro id
     socket.join(retroId);
-    console.log('User has joined retro. ', { userId, retroId })
+    console.log('User has joined retro. ', { user_id, retroId })
 
     // Send a broadcast to the room that the user has joined
-    this.io.to(retroId).emit('userJoinedRetro', userId)
+    this.io.to(retroId).emit('userJoinedRetro', user_id)
 
     // Send that user the retro objects
     await this.sendRetroToUser(socket, retroId)
