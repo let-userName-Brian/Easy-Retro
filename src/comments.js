@@ -11,11 +11,14 @@ async function fetchCommentsByRetroId(retro_id) {
 }
 
 async function insertComment(card_id, comment_text, user_id) {
-
+  return await knex('comment')
+    .insert({ card_id, comment_text, user_id }, '*')
 }
 
 async function deleteComment(comment_id) {
-
+  return await knex('comment')
+    .where({ comment_id })
+    .delete()
 }
 
 module.exports = { fetchCommentsByRetroId, insertComment, deleteComment }

@@ -2,7 +2,7 @@ const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
 const { fetchColumnsByRetroId, insertNewColumn, fetchColumnById, updateColName, deleteColumn } = require('./columns')
 const { fetchCardsByRetroId, fetchCardsByColumnId, insertNewCard, fetchCardByCardId, updateCardText } = require('./cards')
-const { fetchCommentsByRetroId, insertComment, fetchCommentsByCardId } = require('./comments')
+const { fetchCommentsByRetroId, insertComment, fetchCommentsByCardId, deleteComment } = require('./comments')
 const { updateAddVote, updateRemoveVote } = require('./votes')
 
 module.exports = class SocketServer {
@@ -35,7 +35,7 @@ module.exports = class SocketServer {
 
       // Listen for comment events from the client
       socket.on('addComment', ({ card_id, comment_text, user_id }) => this.addComment(card_id, comment_text, user_id))
-      socket.on('removeComment', ({ comment_id }) => this.removeComment(comment_id))
+      socket.on('removeComment', ({ comment_id, card_id }) => this.removeComment(comment_id, card_id))
 
       // Listen for vote events from the client
       socket.on('addVote', ({ user_id, card_id, vote_type }) => this.addVote(user_id, card_id, vote_type))
@@ -158,6 +158,15 @@ module.exports = class SocketServer {
 
   async addComment(card_id, comment_text, user_id) {
     await insertComment(card_id, comment_text, user_id)
-    let comments = fetchCommentsByCardId(card_id)
+    let comments = await fetchCommentsByCardId(card_id)
+    let card = await fetchCardByCardId(card_id)
+    this.io.to(this.retro_id).emit('commentUpdated', { card, comments })
+  }
+
+  async removeComment(comment_id, card_id) {
+    await deleteComment(comment_id)
+    let comments = await fetchCommentsByCardId(card_id)
+    let card = await fetchCardByCardId(card_id)
+    this.io.to(this.retro_id).emit('commentUpdated', { card, comments })
   }
 }
