@@ -31,6 +31,7 @@ async function getRetrosByUserId(req, res) {
 
 //postRetro
 async function postRetro(req, res) {
+  console.log('posting retro')
   //may need to revise if it gets wacky (Chasten)
   //insert the column id and name into the column table
   let tags = req.body.tags
@@ -53,7 +54,7 @@ async function postRetro(req, res) {
           max_votes: max_votes
         }))
       .then(() => t('user_retro')
-        .insert({ user_id, retro_id }))
+        .insert({ user_id, retro_id, is_facilitator: true }))
       .then(() => res.json(retro_id))
   })
 }
