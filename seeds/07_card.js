@@ -7,7 +7,7 @@ exports.seed = function (knex) {
     let votes = []
     let maxVotes = Math.floor(Math.random() * 10)
     for (let v = 0; v < maxVotes; v++) {
-      votes.push({ "0e5639ea-8868-4bf6-ab5f-cb8a8d470785": "up_vote" })
+      votes.push({ user_id: "0e5639ea-8868-4bf6-ab5f-cb8a8d470785", vote_type: "up" })
     }
 
     arr.push({
