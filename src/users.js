@@ -13,7 +13,7 @@ async function getUserById(req, res) {
 }
 
 async function fetchUserNameById(user_id) {
-  return knex('user')
+  return knex('user_profile')
     .select('user_name')
     .where({ user_id })
 }
@@ -23,7 +23,7 @@ async function login(req, res) {
 
   if (!token) {
     let user_id = '1c1543a6-9cdd-4616-a5d7-3021b0bf40ad'
-    let user = await knex('user')
+    let user = await knex('user_profile')
       .select('*')
       .where({ user_id })
     res.json(user[0])
@@ -33,12 +33,12 @@ async function login(req, res) {
   let user_id = token.sub
   let user_name = token.name
 
-  let user = await knex('user')
+  let user = await knex('user_profile')
     .select('*')
     .where({ user_id })
 
   if (user.length === 0) {
-    user = await knex('user')
+    user = await knex('user_profile')
       .insert({ user_id, user_name })
   }
 
