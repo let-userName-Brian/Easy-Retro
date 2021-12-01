@@ -25,8 +25,9 @@ async function fetchCardIdsByColumnId(column_id) {
 async function fetchCardsByColumnId(column_id) {
   let card_ids = await fetchCardIdsByColumnId(column_id)
   return knex('card')
-    .select('*')
+    .join('user_profile', 'card.user_id', '=', 'user_profile.user_id')
     .whereIn('card_id', card_ids)
+    .select('card.*', 'user_profile.user_name')
 }
 
 /**
@@ -44,7 +45,8 @@ async function insertNewCard(column_id, user_id) {
 
 async function fetchCardByCardId(card_id) {
   return knex('card')
-    .select('*')
+    .join('user_profile', 'card.user_id', '=', 'user_profile.user_id')
+    .select('card.*', 'user_profile.user_name')
     .where({ card_id })
     .then(cards => cards[0])
 }
