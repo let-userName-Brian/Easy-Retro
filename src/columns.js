@@ -46,7 +46,8 @@ async function insertNewColumn(retro_id) {
 async function updateColName(column_id, column_name) {
   return await knex('column_table')
     .where({ column_id })
-    .update({ column_name })
+    .update({ column_name }, '*')
+    .then(columns => columns[0])
 }
 
 async function deleteColumn(retro_id, column_id) {
