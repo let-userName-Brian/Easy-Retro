@@ -43,12 +43,10 @@ async function insertNewColumn(retro_id) {
   })
 }
 
-async function updateColName(column_id, new_name) {
-  return await knex.transaction(async (t) => {
-    return await t('column_table')
-      .where({ column_id })
-      .update({ column_name: new_name }, 'column_name')
-  })
+async function updateColName(column_id, column_name) {
+  return await knex('column_table')
+    .where({ column_id })
+    .update({ column_name })
 }
 
 async function deleteColumn(retro_id, column_id) {
