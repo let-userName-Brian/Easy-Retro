@@ -143,14 +143,14 @@ module.exports = class SocketServer {
   }
 
   async addVote(user_id, card_id, vote_type) {
-    updateAddVote(user_id, card_id, vote_type)
+    await updateAddVote(user_id, card_id, vote_type)
     let newCard = await fetchCardByCardId(card_id)
     let votes = newCard.votes
     this.io.to(this.retro_id).emit('votesChanged', { card_id, votes })
   }
 
   async removeVote(user_id, card_id, vote_type) {
-    updateRemoveVote(user_id, card_id, vote_type)
+    await updateRemoveVote(user_id, card_id, vote_type)
     let newCard = await fetchCardByCardId(card_id)
     let votes = newCard.votes
     this.io.to(this.retro_id).emit('votesChanged', { card_id, votes })
