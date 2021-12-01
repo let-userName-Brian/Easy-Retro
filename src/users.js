@@ -39,7 +39,7 @@ async function login(req, res) {
 
   if (user.length === 0) {
     user = await knex('user_profile')
-      .insert({ user_id, user_name })
+      .insert({ user_id, user_name }, '*')
   }
 
   res.json(user[0])
