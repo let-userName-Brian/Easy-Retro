@@ -10,4 +10,12 @@ async function fetchCommentsByRetroId(retro_id) {
     .select('comment.*', 'user_profile.user_name')
 }
 
-module.exports = { fetchCommentsByRetroId }
+async function insertComment(card_id, comment_text, user_id) {
+
+}
+
+async function deleteComment(comment_id) {
+
+}
+
+module.exports = { fetchCommentsByRetroId, insertComment, deleteComment }
