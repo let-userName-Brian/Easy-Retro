@@ -37,7 +37,8 @@ async function insertNewColumn(retro_id) {
       .insert({ column_name: 'New Column' }, 'column_id')
       .then(async (new_column_id) => knex('retro')
         .where({ retro_id })
-        .update('column_ids', knex.raw('column_ids || ?', [new_column_id]), 'column_ids'))
+        // .update('column_ids', knex.raw('column_ids || ?', [new_column_id]), 'column_ids'))
+        .update('column_ids', knex.raw('array_cat(column_ids, ?)', [new_column_id]), 'column_ids'))
   })
 }
 
@@ -49,4 +50,16 @@ async function updateColName(column_id, new_name) {
   })
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, updateColName }
+async function deleteColumn(retro_id, column_id) {
+  return await knex.transaction(async (t) => {
+    return await t('column_table')
+      .where({ column_id })
+      .del()
+      .then(async () => await t('retro')
+        .where({ retro_id })
+        .update('column_ids', knex.raw('array_remove(column_ids, ?:: int)', [column_id]), 'column_ids')
+      )
+  })
+}
+
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, updateColName, deleteColumn }

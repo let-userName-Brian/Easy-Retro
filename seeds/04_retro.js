@@ -5,7 +5,7 @@ exports.seed = function (knex) {
     {
       retro_id: "e0fef645-088d-4f13-b53a-ccb95f4f2131",
       retro_name: "Chasten's Thoughts on Mjolnir",
-      column_ids: [n++, n++, n++],
+      column_ids: [n++, n++, n++, n++],
       tags: ["aypples", "banaynays"]
     },
     {
