@@ -12,7 +12,7 @@ exports.seed = function (knex) {
       }),
       user_id: "c1ad74ae-b651-4fa0-9820-833193797964",
       card_id: 1 + Math.floor(Math.random() * 30),
-      reactions: JSON.stringify([{ "c1ad74ae-b651-4fa0-9820-833193797964": "banana" }])
+      // reactions: JSON.stringify([{ "c1ad74ae-b651-4fa0-9820-833193797964": "banana" }])
     })
   }
   // Inserts seed entries

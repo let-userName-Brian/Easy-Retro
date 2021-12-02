@@ -43,13 +43,6 @@ async function insertNewColumn(retro_id) {
   })
 }
 
-async function updateColName(column_id, column_name) {
-  return await knex('column_table')
-    .where({ column_id })
-    .update({ column_name }, '*')
-    .then(columns => columns[0])
-}
-
 async function deleteColumn(retro_id, column_id) {
   return await knex.transaction(async (t) => {
     return await t('column_table')
@@ -62,4 +55,11 @@ async function deleteColumn(retro_id, column_id) {
   })
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, updateColName, deleteColumn }
+async function updateColName(column_id, column_name) {
+  return await knex('column_table')
+    .where({ column_id })
+    .update({ column_name }, '*')
+    .then(columns => columns[0])
+}
+
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, deleteColumn, updateColName }
