@@ -11,7 +11,7 @@ exports.up = function (knex) {
       .references('card_id').inTable('card')
       .onUpdate('CASCADE').onDelete('CASCADE')
 
-    table.json('reactions') // Array of objects { user_id: reaction_type }
+    // table.json('reactions') // Array of objects { user_id: reaction_type }
     table.timestamps(true, true); // adds created_at and updated_at
   });
 };
