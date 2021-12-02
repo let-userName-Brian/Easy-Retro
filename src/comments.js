@@ -22,12 +22,6 @@ async function insertComment(card_id, comment_text, user_id) {
     .insert({ card_id, comment_text, user_id })
 }
 
-async function deleteComment(comment_id) {
-  return await knex('comment')
-    .where({ comment_id })
-    .delete()
-}
-
 async function updateCommentText(comment_id, comment_text) {
   return await knex('comment')
     .where({ comment_id })
@@ -35,4 +29,10 @@ async function updateCommentText(comment_id, comment_text) {
     .then(comment => comment[0])
 }
 
-module.exports = { fetchCommentsByRetroId, insertComment, deleteComment, updateCommentText, fetchCommentsByCardId }
+async function deleteComment(comment_id) {
+  return await knex('comment')
+    .where({ comment_id })
+    .delete()
+}
+
+module.exports = { fetchCommentsByRetroId, fetchCommentsByCardId, insertComment, updateCommentText, deleteComment }
