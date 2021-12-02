@@ -47,7 +47,12 @@ async function insertNewCard(column_id, user_id) {
   return await knex.transaction(async (t) => {
     return await t('card')
       .insert({ card_text: 'New Card', user_id }, 'card_id')
-      .then(async (new_card_id) => await knex.raw('update column_table set card_ids = card_ids || ? where column_id = ?;', [new_card_id, column_id]))
+      .then(async (new_card_id) => {
+        await t('column_table')
+          .where({ column_id })
+          .update('card_ids', knex.raw('card_ids || ?', [new_card_id]))
+        return new_card_id[0]
+      })
   })
 }
 
