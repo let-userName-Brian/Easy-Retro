@@ -28,4 +28,11 @@ async function deleteComment(comment_id) {
     .delete()
 }
 
-module.exports = { fetchCommentsByRetroId, insertComment, deleteComment, fetchCommentsByCardId }
+async function updateCommentText(comment_id, comment_text) {
+  return await knex('comment')
+    .where({ comment_id })
+    .update({ comment_text }, '*')
+    .then(comment => comment[0])
+}
+
+module.exports = { fetchCommentsByRetroId, insertComment, deleteComment, updateCommentText, fetchCommentsByCardId }
