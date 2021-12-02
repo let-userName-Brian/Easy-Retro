@@ -20,28 +20,33 @@ module.exports = class SocketServer {
       this.io.emit('newConnection', socket.id)
 
       let retro_id = null
+      let user_id = null
 
       // Establish all connection points that the client may send to the server
-      socket.on('joinRetro', async (payload) => retro_id = await this.joinRetro(socket, payload))
+      socket.on('joinRetro', async ({ user_id: joinedUserId, retro_id: joinedRetroId }) => {
+        user_id = joinedUserId
+        retro_id = joinedRetroId
+        await this.joinRetro(socket, joinedUserId, joinedRetroId)
+      })
 
       // Listen for column events from the client
-      socket.on('addColumn', ({ }) => this.addColumn(retro_id))
+      socket.on('addColumn', () => this.addColumn(retro_id))
       socket.on('removeColumn', ({ column_id }) => this.removeColumn(retro_id, column_id))
       socket.on('renameColumn', ({ column_id, column_name }) => this.renameColumn(retro_id, column_id, column_name))
 
       // Listen for card events from the client
-      socket.on('addCard', ({ column_id, user_id }) => this.addCard(retro_id, column_id, user_id))
-      socket.on('removeCard', ({ card_id }) => this.removeCard(retro_id, card_id))
+      socket.on('addCard', ({ column_id }) => this.addCard(retro_id, column_id, user_id))
+      socket.on('removeCard', ({ card_id }) => this.removeCard(retro_id, card_id, user_id))
       socket.on('changeCardText', ({ card_id, card_text }) => this.changeCardText(retro_id, card_id, card_text))
 
       // Listen for comment events from the client
-      socket.on('addComment', ({ card_id, user_id }) => this.addComment(retro_id, card_id, user_id))
-      socket.on('removeComment', ({ comment_id, card_id }) => this.removeComment(retro_id, comment_id, card_id))
+      socket.on('addComment', ({ card_id }) => this.addComment(retro_id, card_id, user_id))
+      socket.on('removeComment', ({ comment_id, card_id }) => this.removeComment(retro_id, comment_id, card_id, user_id))
       socket.on('changeCommentText', ({ comment_id, commentText }) => this.changeCommentText(retro_id, comment_id, commentText))
 
       // Listen for vote events from the client
-      socket.on('addVote', ({ user_id, card_id, vote_type }) => this.addVote(retro_id, user_id, card_id, vote_type))
-      socket.on('removeVote', ({ user_id, card_id, vote_type }) => this.removeVote(retro_id, user_id, card_id, vote_type))
+      socket.on('addVote', ({ card_id, vote_type }) => this.addVote(retro_id, user_id, card_id, vote_type))
+      socket.on('removeVote', ({ card_id, vote_type }) => this.removeVote(retro_id, user_id, card_id, vote_type))
     });
   }
 
@@ -50,7 +55,7 @@ module.exports = class SocketServer {
    * @param {string} user_id
    * @param {string} retro_id
    */
-  async joinRetro(socket, { user_id, retro_id }) {
+  async joinRetro(socket, user_id, retro_id) {
     // Put the client into a room with the same name as the retro id
     socket.join(retro_id);
     console.log('User has joined retro. ', { user_id, retro_id })
@@ -60,8 +65,6 @@ module.exports = class SocketServer {
 
     // Send that user the retro objects
     await this.sendRetroToUser(socket, retro_id)
-
-    return retro_id
   }
 
   /**
@@ -121,14 +124,14 @@ module.exports = class SocketServer {
     this.cardUpdated(retro_id, cards, column, user_id, card_id)
   }
 
-  async removeCard(retro_id, card_id) {
+  async removeCard(retro_id, card_id, user_id) {
     // console.log('removeCard', card_id)
     let column_id = await fetchColumnIdByCardId(card_id)
     // console.log('column_id', column_id)
     await deleteCard(card_id, column_id)
     let newCards = await fetchCardsByColumnId(column_id)
     let column = await fetchColumnById(column_id)
-    this.cardUpdated(retro_id, newCards, column, null, card_id)
+    this.cardUpdated(retro_id, newCards, column, user_id, card_id)
   }
 
   cardUpdated(retro_id, cards, column, user_id, card_id) {
@@ -148,27 +151,29 @@ module.exports = class SocketServer {
    */
   async addComment(retro_id, card_id, user_id) {
     console.log('addComment on: ', card_id, user_id)
-    await insertComment(card_id, user_id)
+    let comment_id = await insertComment(card_id, user_id)
+    console.log('comment_id', comment_id)
+
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
-    this.commentUpdated(retro_id, card, comments)
+    this.commentUpdated(retro_id, card, comments, user_id, comment_id)
   }
 
-  async removeComment(retro_id, comment_id, card_id) {
+  async removeComment(retro_id, comment_id, card_id, user_id) {
     console.log('removeComment', comment_id, card_id)
     await deleteComment(comment_id)
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
-    this.commentUpdated(retro_id, card, comments)
+    this.commentUpdated(retro_id, card, comments, user_id, comment_id)
   }
 
-  commentUpdated(retro_id, card, comments) {
-    this.io.to(retro_id).emit('commentUpdated', { card, comments })
+  commentUpdated(retro_id, card, comments, user_id, comment_id) {
+    this.io.to(retro_id).emit('commentUpdated', { card, comments, user_id, comment_id })
   }
 
   async changeCommentText(retro_id, comment_id, comment_text) {
     let comment = await updateCommentText(comment_id, comment_text)
-    this.io.to(retro_id).emit('commentTextUpdated', { comment })
+    this.io.to(retro_id).emit('commentTextUpdated', { comment, comment_id })
   }
 
   async addVote(retro_id, user_id, card_id, vote_type) {
