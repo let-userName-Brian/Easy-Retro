@@ -8,6 +8,7 @@ async function fetchCommentsByRetroId(retro_id) {
     .join('user_profile', 'comment.user_id', '=', 'user_profile.user_id')
     .whereIn('card_id', cards.map(card => card.card_id))
     .select('comment.*', 'user_profile.user_name')
+    .orderBy('comment_id')
 }
 
 async function fetchCommentsByCardId(card_id) {
@@ -15,6 +16,7 @@ async function fetchCommentsByCardId(card_id) {
     .join('user_profile', 'comment.user_id', '=', 'user_profile.user_id')
     .where({ card_id })
     .select('comment.*', 'user_profile.user_name')
+    .orderBy('comment_id')
 }
 
 async function insertComment(card_id, user_id) {
