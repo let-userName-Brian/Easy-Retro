@@ -58,4 +58,4 @@ async function updateCardText(card_id, card_text) {
     .then(cards => cards[0])
 }
 
-module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, insertNewCard, fetchCardIdsByColumnId, fetchCardByCardId, updateCardText }
+module.exports = { fetchCardsByRetroId, fetchCardIdsByColumnId, fetchCardsByColumnId, insertNewCard, fetchCardByCardId, updateCardText }
