@@ -36,10 +36,12 @@ async function insertNewColumn(retro_id) {
   return await knex.transaction(async (t) => {
     return await t('column_table')
       .insert({ column_name: 'New Column' }, 'column_id')
-      .then(async (new_column_id) => knex('retro')
-        .where({ retro_id })
-        // .update('column_ids', knex.raw('column_ids || ?', [new_column_id]), 'column_ids'))
-        .update('column_ids', knex.raw('array_cat(column_ids, ?)', [new_column_id]), 'column_ids'))
+      .then(async (new_column_id) => {
+        await t('retro')
+          .where({ retro_id })
+          .update('column_ids', knex.raw('array_cat(column_ids, ?)', [new_column_id]), 'column_ids')
+        return new_column_id[0]
+      })
   })
 }
 
