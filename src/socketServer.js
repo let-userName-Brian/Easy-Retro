@@ -157,6 +157,7 @@ module.exports = class SocketServer {
   }
 
   async addComment(card_id, comment_text, user_id) {
+    console.log('addComment', card_id, comment_text, user_id)
     await insertComment(card_id, comment_text, user_id)
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
@@ -164,6 +165,7 @@ module.exports = class SocketServer {
   }
 
   async removeComment(comment_id, card_id) {
+    console.log('removeComment', comment_id, card_id)
     await deleteComment(comment_id)
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
