@@ -59,4 +59,13 @@ async function postRetro(req, res) {
   })
 }
 
-module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro }
+async function deleteRetroById(req, res) {
+  let retro_id = req.params.retro_id
+  await knex('retro')
+    .where({ retro_id })
+    .del()
+    .then(() => res.json(retro_id))
+}
+
+
+module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro, deleteRetroById }

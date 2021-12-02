@@ -3,7 +3,7 @@ const app = express();
 const server = require('http').createServer(app);
 const cors = require('cors')
 const morgan = require('morgan')
-const { getRetros, getRetroById, getRetrosByUserId, postRetro } = require('./retros')
+const { getRetros, getRetroById, getRetrosByUserId, postRetro, deleteRetroById } = require('./retros')
 const { getUsers, getUserById, login } = require('./users')
 const jwt = require('jsonwebtoken');
 const SocketServer = require('./socketServer');
@@ -31,6 +31,7 @@ app.get('/users/:user_id/retros', getRetrosByUserId)
 app.get('/retros', getRetros)
 app.post('/retros/create/:user_id', postRetro)
 app.get('/retros/:retro_id', getRetroById)
+app.delete('/retros/delete/:retro_id', deleteRetroById)
 
 new SocketServer(server)
 
