@@ -22,7 +22,8 @@ async function fetchCommentsByCardId(card_id) {
 async function insertComment(card_id, user_id) {
   return await knex.transaction(async (t) => {
     return await t('comment')
-      .insert({ card_id, comment_text: 'New Comment', user_id })
+      .insert({ card_id, comment_text: 'New Comment', user_id }, 'comment_id')
+      .then(comments => comments[0])
   })
 }
 
