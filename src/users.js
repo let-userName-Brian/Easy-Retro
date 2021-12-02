@@ -45,4 +45,15 @@ async function login(req, res) {
   res.json(user[0])
 }
 
-module.exports = { getUsers, getUserById, login }
+async function changeDarkModePreferences(req, res) {
+  let user_id = req.params.user_id
+  let is_dark_mode = req.body.is_dark_mode
+  let data = await knex('user_profile')
+    .update({ is_dark_mode }, '*')
+    .where({ user_id })
+    .then(console.log('dark mode preference updated on the server'))
+  res.status(200).json(data[0])
+
+}
+
+module.exports = { getUsers, getUserById, login, changeDarkModePreferences }
