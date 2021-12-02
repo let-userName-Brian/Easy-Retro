@@ -52,14 +52,14 @@ async function insertNewCard(column_id, user_id) {
 }
 
 //refactored from columns but untested
-async function deleteCard(retro_id, column_id, card_id) {
+async function deleteCard(card_id, column_id) {
   return await knex.transaction(async (t) => {
     return await t('card')
       .where({ card_id })
       .del()
       .then(async () => await t('column_table')
         .where({ column_id })
-        .update('card_ids', knex.raw('array_remove(card_ids, ?:: int)', [card_id]), 'card_ids')
+        .update('card_ids', knex.raw('array_remove(card_ids, ?:: int)', [card_id]))
       )
   })
 }

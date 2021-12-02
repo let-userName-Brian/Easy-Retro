@@ -62,4 +62,11 @@ async function updateColName(column_id, column_name) {
     .then(columns => columns[0])
 }
 
-module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, deleteColumn, updateColName }
+async function fetchColumnIdByCardId(card_id) {
+  return await knex('column_table')
+    .whereRaw('? = ANY(card_ids)', card_id)
+    .select('column_id')
+    .then(columns => columns[0].column_id)
+}
+
+module.exports = { getColumnsByRetroId, fetchColumnsByRetroId, fetchColumnById, insertNewColumn, deleteColumn, updateColName, fetchColumnIdByCardId }
