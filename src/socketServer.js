@@ -152,7 +152,7 @@ module.exports = class SocketServer {
     await insertComment(card_id, comment_text, user_id)
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
-    this.io.to(this.retro_id).emit('commentUpdated', { card, comments })
+    this.commentUpdated(card, comments)
   }
 
   async removeComment(comment_id, card_id) {
@@ -160,25 +160,17 @@ module.exports = class SocketServer {
     await deleteComment(comment_id)
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
-    this.io.to(this.retro_id).emit('commentUpdated', { card, comments })
+    this.commentUpdated(card, comments)
   }
 
-  commentUpdated(retro_id, comment) {
-    this.io.to(retro_id).emit('commentUpdated', comment)
+  commentUpdated(card, comments) {
+    this.io.to(this.retro_id).emit('commentUpdated', { card, comments })
   }
 
   async changeCommentText(comment_id, comment_text) {
     let comment = await updateCommentText(comment_id, comment_text)
     this.io.to(this.retro_id).emit('commentTextUpdated', { comment })
   }
-
-  //should be comment updated
-  //   commentAdded(retro_id, comment) {
-  //   this.io.to(retro_id).emit('commentAdded', comment)
-  // }
-  //   commentDeleted(retro_id, commentId) {
-  //     this.io.to(retro_id).emit('commentDeleted', commentId)
-  //   }
 
   async addVote(user_id, card_id, vote_type) {
     await updateAddVote(user_id, card_id, vote_type)
