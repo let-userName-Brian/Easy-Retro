@@ -1,6 +1,6 @@
 const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
-const { fetchColumnsByRetroId, fetchColumnById, insertNewColumn, deleteColumn, updateColName } = require('./columns')
+const { fetchColumnsByRetroId, fetchColumnById, insertNewColumn, deleteColumn, updateColName, fetchColumnIdByCardId } = require('./columns')
 const { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardByCardId, insertNewCard, deleteCard, updateCardText } = require('./cards')
 const { fetchCommentsByRetroId, fetchCommentsByCardId, insertComment, deleteComment, updateCommentText } = require('./comments')
 const { updateAddVote, updateRemoveVote } = require('./votes')
@@ -29,7 +29,7 @@ module.exports = class SocketServer {
       socket.on('renameColumn', ({ retro_id, column_id, column_name }) => this.renameColumn(retro_id, column_id, column_name))
 
       // Listen for card events from the client
-      socket.on('addCard', ({ retro_id, column_id, user_id }) => this.addCard(retro_id, column_id, user_id))
+      socket.on('addCard', ({ retro_id, column_id, user_id }) => this.addCard(column_id, user_id))
       socket.on('removeCard', ({ card_id }) => this.removeCard(card_id))
       socket.on('changeCardText', ({ card_id, card_text }) => this.changeCardText(card_id, card_text))
 
@@ -90,9 +90,9 @@ module.exports = class SocketServer {
   }
 
   async removeColumn(retro_id, column_id) {
-    let newColumnIds = await deleteColumn(retro_id, column_id)
+    await deleteColumn(retro_id, column_id)
     let newColumns = await fetchColumnsByRetroId(retro_id)
-    this.columnUpdated(retro_id, newColumns, newColumnIds[0])
+    this.columnUpdated(retro_id, newColumns)
   }
 
   async columnUpdated(retro_id, columns) {
@@ -112,22 +112,25 @@ module.exports = class SocketServer {
    * @param {*} column_id
    * @param {*} user_id
    */
-  async addCard(retro_id, column_id, user_id) {
+  async addCard(column_id, user_id) {
     await insertNewCard(column_id, user_id)
     let cards = await fetchCardsByColumnId(column_id)
     let column = await fetchColumnById(column_id)
-    this.cardUpdated(retro_id, cards, column)
+    this.cardUpdated(cards, column)
   }
 
-  //not yet implemented or refactored!!!!!
-  async removeCard(retro_id, column_id) {
-    let newCardIds = await deleteColumn(retro_id, column_id)
-    let newCardss = await fetchColumnsByRetroId(retro_id)
-    this.columnUpdated(retro_id, newColumns, newCardIds[0])
+  async removeCard(card_id) {
+    console.log('removeCard', card_id)
+    let column_id = await fetchColumnIdByCardId(card_id)
+    console.log('column_id', column_id)
+    await deleteCard(card_id, column_id)
+    let newCards = await fetchCardsByColumnId(column_id)
+    let column = await fetchColumnById(column_id)
+    this.cardUpdated(newCards, column)
   }
 
-  cardUpdated(retro_id, cards, column) {
-    this.io.to(retro_id).emit('cardUpdated', { cards, column })
+  cardUpdated(cards, column) {
+    this.io.to(this.retro_id).emit('cardUpdated', { cards, column })
   }
 
   async changeCardText(card_id, card_text) {
