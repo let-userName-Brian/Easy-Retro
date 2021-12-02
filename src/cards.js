@@ -46,7 +46,7 @@ async function fetchCardByCardId(card_id) {
 async function insertNewCard(column_id, user_id) {
   return await knex.transaction(async (t) => {
     return await t('card')
-      .insert({ card_text: 'New Card', user_id: user_id }, 'card_id')
+      .insert({ card_text: 'New Card', user_id }, 'card_id')
       .then(async (new_card_id) => await knex.raw('update column_table set card_ids = card_ids || ? where column_id = ?;', [new_card_id, column_id]))
   })
 }
