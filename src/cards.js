@@ -51,13 +51,6 @@ async function insertNewCard(column_id, user_id) {
   })
 }
 
-async function updateCardText(card_id, card_text) {
-  return await knex('card')
-    .where({ card_id })
-    .update({ card_text }, '*')
-    .then(cards => cards[0])
-}
-
 //refactored from columns but untested
 async function deleteCard(retro_id, column_id, card_id) {
   return await knex.transaction(async (t) => {
@@ -71,4 +64,11 @@ async function deleteCard(retro_id, column_id, card_id) {
   })
 }
 
-module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardIdsByColumnId, fetchCardByCardId, insertNewCard, updateCardText, deleteCard }
+async function updateCardText(card_id, card_text) {
+  return await knex('card')
+    .where({ card_id })
+    .update({ card_text }, '*')
+    .then(cards => cards[0])
+}
+
+module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardIdsByColumnId, fetchCardByCardId, insertNewCard, deleteCard, updateCardText }
