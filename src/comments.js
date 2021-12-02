@@ -17,9 +17,11 @@ async function fetchCommentsByCardId(card_id) {
     .select('comment.*', 'user_profile.user_name')
 }
 
-async function insertComment(card_id, comment_text, user_id) {
-  return await knex('comment')
-    .insert({ card_id, comment_text, user_id })
+async function insertComment(card_id, user_id) {
+  return await knex.transaction(async (t) => {
+    return await t('comment')
+      .insert({ card_id, comment_text: 'New Comment', user_id })
+  })
 }
 
 async function deleteComment(comment_id) {
@@ -29,6 +31,7 @@ async function deleteComment(comment_id) {
 }
 
 async function updateCommentText(comment_id, comment_text) {
+  console.log(comment_id, comment_text)
   return await knex('comment')
     .where({ comment_id })
     .update({ comment_text }, '*')

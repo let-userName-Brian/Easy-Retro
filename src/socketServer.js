@@ -34,9 +34,9 @@ module.exports = class SocketServer {
       socket.on('changeCardText', ({ card_id, card_text }) => this.changeCardText(card_id, card_text))
 
       // Listen for comment events from the client
-      socket.on('addComment', ({ card_id, comment_text, user_id }) => this.addComment(card_id, comment_text, user_id))
+      socket.on('addComment', ({ card_id, user_id }) => this.addComment(card_id, user_id))
       socket.on('removeComment', ({ comment_id, card_id }) => this.removeComment(comment_id, card_id))
-      socket.on('changeCommentText', ({ comment_id, comment_text }) => this.changeCommentText(comment_id, comment_text))
+      socket.on('changeCommentText', ({ comment_id, commentText }) => this.changeCommentText(comment_id, commentText))
 
       // Listen for vote events from the client
       socket.on('addVote', ({ user_id, card_id, vote_type }) => this.addVote(user_id, card_id, vote_type))
@@ -147,9 +147,9 @@ module.exports = class SocketServer {
    * @param {*} comment_text
    * @param {*} user_id
    */
-  async addComment(card_id, comment_text, user_id) {
-    console.log('addComment', card_id, comment_text, user_id)
-    await insertComment(card_id, comment_text, user_id)
+  async addComment(card_id, user_id) {
+    console.log('addComment on: ', card_id, user_id)
+    await insertComment(card_id, user_id)
     let comments = await fetchCommentsByCardId(card_id)
     let card = await fetchCardByCardId(card_id)
     this.commentUpdated(card, comments)
