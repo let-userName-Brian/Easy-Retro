@@ -15,6 +15,14 @@ async function fetchCardsByRetroId(retro_id) {
     .select('card.*', 'user_profile.user_name')
 }
 
+async function fetchCardsByColumnId(column_id) {
+  let card_ids = await fetchCardIdsByColumnId(column_id)
+  return knex('card')
+    .join('user_profile', 'card.user_id', '=', 'user_profile.user_id')
+    .whereIn('card_id', card_ids)
+    .select('card.*', 'user_profile.user_name')
+}
+
 async function fetchCardIdsByColumnId(column_id) {
   return await knex('column_table')
     .select('card_ids')
@@ -22,12 +30,12 @@ async function fetchCardIdsByColumnId(column_id) {
     .then(columns => columns[0].card_ids)
 }
 
-async function fetchCardsByColumnId(column_id) {
-  let card_ids = await fetchCardIdsByColumnId(column_id)
+async function fetchCardByCardId(card_id) {
   return knex('card')
     .join('user_profile', 'card.user_id', '=', 'user_profile.user_id')
-    .whereIn('card_id', card_ids)
     .select('card.*', 'user_profile.user_name')
+    .where({ card_id })
+    .then(cards => cards[0])
 }
 
 /**
@@ -43,14 +51,6 @@ async function insertNewCard(column_id, user_id) {
   })
 }
 
-async function fetchCardByCardId(card_id) {
-  return knex('card')
-    .join('user_profile', 'card.user_id', '=', 'user_profile.user_id')
-    .select('card.*', 'user_profile.user_name')
-    .where({ card_id })
-    .then(cards => cards[0])
-}
-
 async function updateCardText(card_id, card_text) {
   return await knex('card')
     .where({ card_id })
@@ -58,4 +58,17 @@ async function updateCardText(card_id, card_text) {
     .then(cards => cards[0])
 }
 
-module.exports = { fetchCardsByRetroId, fetchCardIdsByColumnId, fetchCardsByColumnId, insertNewCard, fetchCardByCardId, updateCardText }
+//refactored from columns but untested
+async function deleteCard(retro_id, column_id, card_id) {
+  return await knex.transaction(async (t) => {
+    return await t('card')
+      .where({ card_id })
+      .del()
+      .then(async () => await t('column_table')
+        .where({ column_id })
+        .update('card_ids', knex.raw('array_remove(card_ids, ?:: int)', [card_id]), 'card_ids')
+      )
+  })
+}
+
+module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardIdsByColumnId, fetchCardByCardId, insertNewCard, updateCardText, deleteCard }
