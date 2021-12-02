@@ -59,4 +59,22 @@ async function postRetro(req, res) {
   })
 }
 
-module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro }
+async function deleteRetroById(req, res) {
+  let retro_id = req.params.retro_id
+  let user_id = req.body.user_id
+  console.log('user_id', user_id)
+  await knex('retro')
+    .where({ retro_id })
+    .del()
+    .then( async () => {
+      console.log('backend response to deleteRetroById')
+      await knex('retro')
+        .innerJoin('user_retro', 'retro.retro_id', 'user_retro.retro_id')
+        .where({ user_id })
+        .then(data => res.json(data))
+        .catch(err => console.log(err))
+    })
+}
+
+
+module.exports = { fetchRetro, getRetros, getRetroById, getRetrosByUserId, postRetro, deleteRetroById }
