@@ -4,7 +4,6 @@ exports.seed = function (knex) {
   let arr = []
   for (let comment_id = 1; comment_id < 31; comment_id++) {
     arr.push({
-      comment_id,
       comment_text: loremHipsum({
         count: 1,
         units: 'sentences',
