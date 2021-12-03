@@ -1,6 +1,13 @@
 const { knex } = require('./knexConnector')
 const { fetchCardIdsByRetroId } = require('./cards')
 
+async function fetchCommentById(comment_id) {
+  return await knex('comment')
+    .where({ comment_id })
+    .select('*')
+    .then(comments => comments[0])
+}
+
 async function fetchCommentsByRetroId(retro_id) {
   let card_ids = await fetchCardIdsByRetroId(retro_id)
 
@@ -38,4 +45,9 @@ async function updateCommentText(comment_id, comment_text) {
     .then(comment => comment[0])
 }
 
-module.exports = { fetchCommentsByRetroId, fetchCommentsByCardId, insertComment, deleteComment, updateCommentText }
+async function fetchCardIdByCommentId(comment_id) {
+  let comment = await fetchCommentById(comment_id)
+  return comment.card_id
+}
+
+module.exports = { fetchCommentById, fetchCommentsByRetroId, fetchCommentsByCardId, insertComment, deleteComment, updateCommentText, fetchCardIdByCommentId }

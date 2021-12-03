@@ -2,7 +2,7 @@ const socketIo = require('socket.io')
 const { fetchRetro } = require('./retros')
 const { fetchColumnsByRetroId, fetchColumnById, insertNewColumn, deleteColumn, updateColName, fetchColumnIdByCardId } = require('./columns')
 const { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardByCardId, insertNewCard, deleteCard, updateCardText } = require('./cards')
-const { fetchCommentsByRetroId, fetchCommentsByCardId, insertComment, deleteComment, updateCommentText } = require('./comments')
+const { fetchCommentsByRetroId, fetchCommentsByCardId, insertComment, deleteComment, updateCommentText, fetchCardIdByCommentId } = require('./comments')
 const { updateAddVote, updateRemoveVote } = require('./votes')
 
 module.exports = class SocketServer {
@@ -42,7 +42,7 @@ module.exports = class SocketServer {
       // Listen for comment events from the client
       socket.on('addComment', ({ card_id }) => this.addComment(retro_id, card_id, user_id))
       socket.on('removeComment', ({ comment_id, card_id }) => this.removeComment(retro_id, comment_id, card_id, user_id))
-      socket.on('changeCommentText', ({ comment_id, commentText }) => this.changeCommentText(retro_id, comment_id, user_id, commentText))
+      socket.on('changeCommentText', ({ comment_id, comment_text }) => this.changeCommentText(retro_id, comment_id, user_id, comment_text))
 
       // Listen for vote events from the client
       socket.on('addVote', ({ card_id, vote_type }) => this.addVote(retro_id, user_id, card_id, vote_type))
@@ -174,11 +174,14 @@ module.exports = class SocketServer {
   async changeCommentText(retro_id, comment_id, user_id, comment_text) {
     console.log(`${retro_id} -- User ${user_id} is changing comment ${comment_id} text to '${comment_text}'`)
     let comment = await updateCommentText(comment_id, comment_text)
-    this.commentTextUpdated(retro_id, comment, comment_id)
+    let card_id = await fetchCardIdByCommentId(comment_id)
+    let comments = await fetchCommentsByCardId(card_id)
+    this.commentTextUpdated(retro_id, comment, comments, card_id, user_id, comment_id)
   }
 
-  commentTextUpdated(retro_id, comment, comment_id) {
-    this.io.to(retro_id).emit('commentTextUpdated', { retro_id, comment, comment_id })
+  commentTextUpdated(retro_id, comment, comments, card_id, user_id, comment_id) {
+    this.io.to(retro_id).emit('commentTextUpdated', { retro_id, comment, comments, card_id, user_id, comment_id })
+
   }
 
   async addVote(retro_id, user_id, card_id, vote_type) {
