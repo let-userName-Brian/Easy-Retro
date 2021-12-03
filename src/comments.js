@@ -1,12 +1,12 @@
 const { knex } = require('./knexConnector')
-const { fetchCardsByRetroId } = require('./cards')
+const { fetchCardIdsByRetroId } = require('./cards')
 
 async function fetchCommentsByRetroId(retro_id) {
-  let cards = await fetchCardsByRetroId(retro_id)
+  let card_ids = await fetchCardIdsByRetroId(retro_id)
 
   return knex('comment')
     .join('user_profile', 'comment.user_id', '=', 'user_profile.user_id')
-    .whereIn('card_id', cards.map(card => card.card_id))
+    .whereIn('card_id', card_ids)
     .select('comment.*', 'user_profile.user_name')
     .orderBy('comment_id')
 }
@@ -20,11 +20,9 @@ async function fetchCommentsByCardId(card_id) {
 }
 
 async function insertComment(card_id, user_id) {
-  return await knex.transaction(async (t) => {
-    return await t('comment')
-      .insert({ card_id, comment_text: 'New Comment', user_id }, 'comment_id')
-      .then(comments => comments[0])
-  })
+  return await knex('comment')
+    .insert({ card_id, comment_text: 'New Comment', user_id }, 'comment_id')
+    .then(comments => comments[0])
 }
 
 async function deleteComment(comment_id) {
@@ -34,7 +32,6 @@ async function deleteComment(comment_id) {
 }
 
 async function updateCommentText(comment_id, comment_text) {
-  console.log(comment_id, comment_text)
   return await knex('comment')
     .where({ comment_id })
     .update({ comment_text }, '*')

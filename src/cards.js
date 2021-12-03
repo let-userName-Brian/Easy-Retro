@@ -15,6 +15,16 @@ async function fetchCardsByRetroId(retro_id) {
     .select('card.*', 'user_profile.user_name')
 }
 
+/**
+ * Fetches all Card IDs by a Retro ID
+ * @param {string} retro_id
+ * @returns All Card IDs associated with a retro_id
+ */
+async function fetchCardIdsByRetroId(retro_id) {
+  let columns = await fetchColumnsByRetroId(retro_id)
+  return columns.flatMap(column => column.card_ids)
+}
+
 async function fetchCardsByColumnId(column_id) {
   let card_ids = await fetchCardIdsByColumnId(column_id)
   return knex('card')
@@ -76,4 +86,4 @@ async function updateCardText(card_id, card_text) {
     .then(cards => cards[0])
 }
 
-module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardIdsByColumnId, fetchCardByCardId, insertNewCard, deleteCard, updateCardText }
+module.exports = { fetchCardsByRetroId, fetchCardsByColumnId, fetchCardIdsByColumnId, fetchCardIdsByRetroId, fetchCardByCardId, insertNewCard, deleteCard, updateCardText }
